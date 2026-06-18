@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Assessment Auto-Populator</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F5; color: #1A1A1A; }
+  #root { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+  window.ANTHROPIC_API_KEY = "";
+</script>
+
+<script type="text/babel">
+const { useState } = React;
+
+function App() {
+  const [apiKey, setApiKey] = useState(localStorage.getItem('claude_api_key') || '');
+  const [candidateName, setCandidateName] = useState('');
+  const [interviewedBy, setInterviewedBy] = useState('');
+  const [interviewDate, setInterviewDate] = useState('');
+  const [roleContext, setRoleContext] = useState('');
+  const [transcript, setTranscript] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState(null);
+  const [status, setStatus] = useState('');
+
+  function saveKey(val) {
+    setApiKey(val);
+    localStorage.setItem('claude_api_key', val);
+  }
+
+  const ratingColors = {
+    'Outstanding': '#1B7F3A', 'Very Good': '#0F6E56', 'Good': '#185FA5',
+    'Satisfactory': '#854F0B', 'Unsatisfactory': '#A32D2D',
+    'Not Applicable': '#5F5E5A', 'Yes': '#1B7F3A', 'No': '#5F5E5A'
+  };
+  const ratingBg = {
+    'Outstanding': '#EAF3DE', 'Very Good': '#E1F5EE', 'Good': '#E6F1FB',
+    'Satisfactory': '#FAEEDA', 'Unsatisfactory': '#FCEBEB',
+    'Not Applicable': '#F1EFE8', 'Yes': '#EAF3DE', 'No': '#F1EFE8'
+  };
+  const relColors = { 100: ['#1B7F3A', '#EAF3DE'], 50: ['#854F0B', '#FAEEDA'], 0: ['#5F5E5A', '#F1EFE8'] };
+
+  async function generate() {
+    if (!apiKey.trim()) { setError('Please enter your Claude API key above first.'); return; }
+    if (!transcript.trim()) { setError('Please paste a transcript first.'); return; }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+    setStatus('Sending to AI...');
+
+    const prompt = `You are an expert HR assessor helping populate an interview assessment form for DSTA (Defence Science and Technology Agency, Singapore). Analyse the interview transcript and return ONLY a JSON object with this exact structure, no preamble, no markdown, no explanation:
+
+{
+  "attributes": [
+    { "name": "Passion in Defence Engineering & Technology", "rating": "Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable", "remarks": "..." },
+    { "name": "Curiosity & Thirst for Learning", "rating": "...", "remarks": "..." },
+    { "name": "Drive to excel and lead others, while being a team player", "rating": "...", "remarks": "..." },
+    { "name": "A keen and innovative problem solver", "rating": "...", "remarks": "...(MANDATORY: describe specific evidence of innovative mindset)" },
+    { "name": "Flexibility to adapt, and resilient in the face of adversity", "rating": "...", "remarks": "..." }
+  ],
+  "skills": {
+    "Knowledge": { "rating": "Outstanding|Very Good|Good|Satisfactory|Unsatisfactory", "remarks": "..." },
+    "Skillsets": { "rating": "...", "remarks": "..." },
+    "Educational Background": { "rating": "Yes|No", "remarks": "..." },
+    "Certifications": { "rating": "Yes|No", "remarks": "..." }
+  },
+  "justification": "Comprehensive paragraph summarising key strengths, experience, attributes relevant to the role, and overall hiring recommendation with reasoning.",
+  "tre": [
+    { "period": "MMM YY - MMM YY", "position": "Job Title", "company": "Company Name", "relevance": 100, "rationale": "Why this experience is fully, partially, or not relevant to the role" }
+  ],
+  "evidenceNote": "Brief note on whether the source material was a verbatim transcript or a summary, and how that affects confidence in these ratings."
+}
+
+Rating scale order: Outstanding > Very Good > Good > Satisfactory > Unsatisfactory. Only use Not Applicable for attributes with truly no basis to assess.
+Rules:
+- If evidence is insufficient, use Satisfactory and note "Insufficient evidence - interviewer to verify" in remarks.
+- "A keen and innovative problem solver" is MANDATORY, always rate it.
+- TRE relevance must be 100, 50, or 0 only.
+- If source material looks like a summary rather than verbatim transcript, be conservative and flag this in evidenceNote.
+- Role context: ${roleContext || 'not specified, use best judgment'}.
+
+Transcript:
+${transcript}`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey.trim(),
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5-20250929',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error(`API error ${response.status}: ${errBody.slice(0, 200)}`);
+      }
+
+      setStatus('Parsing response...');
+      const data = await response.json();
+      const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+      const clean = raw.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+
+      setResult(parsed);
+      setStatus('Done. Review and adjust before submitting.');
+    } catch (e) {
+      setError('Something went wrong: ' + e.message);
+      setStatus('');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function clearAll() {
+    setTranscript(''); setCandidateName(''); setInterviewedBy('');
+    setInterviewDate(''); setRoleContext(''); setResult(null);
+    setStatus(''); setError('');
+  }
+
+  function copyAssessment() {
+    if (!result) return;
+    const attrsText = result.attributes.map(a => `${a.name}\nRating: ${a.rating}\nRemarks: ${a.remarks}`).join('\n\n');
+    const skillsText = Object.entries(result.skills).map(([k, v]) => `${k}: ${v.rating} - ${v.remarks}`).join('\n');
+    const treText = result.tre.map(e => `${e.period} | ${e.position} - ${e.company} | ${e.relevance}% relevant | ${e.rationale}`).join('\n');
+    const text = `INTERVIEW ASSESSMENT FORM
+=========================
+Candidate: ${candidateName}
+Interviewed by: ${interviewedBy}
+Date: ${interviewDate}
+
+[A] ATTRIBUTES
+${attrsText}
+
+[B] SKILLS & KNOWLEDGE
+${skillsText}
+
+[B] JUSTIFICATION
+${result.justification}
+
+[D] TOTAL RELEVANT EXPERIENCE
+${treText}
+
+[C] INTERVIEW OUTCOME - TO BE COMPLETED BY INTERVIEWER
+Decision:
+Endorsed by PC Head:
+Deployment:
+Proposed Appointment:
+Eligible for ICT/UXD Incentive:
+
+Note on evidence quality: ${result.evidenceNote || 'N/A'}`;
+    navigator.clipboard.writeText(text).then(() => setStatus('Copied to clipboard.'));
+  }
+
+  const inputStyle = { width: '100%', border: '1px solid #D8D6CE', borderRadius: 8, padding: '9px 12px', fontSize: 14, fontFamily: 'inherit', background: '#fff' };
+  const labelStyle = { fontSize: 12, color: '#6B6A65', display: 'block', marginBottom: 4 };
+  const cardStyle = { background: '#fff', border: '1px solid #E5E3DA', borderRadius: 12, padding: '18px 20px', marginBottom: 16 };
+  const sectionLabelStyle = { fontSize: 11, fontWeight: 600, color: '#9A9890', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 };
+
+  return (
+    <div>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 20, fontWeight: 600 }}>Interview assessment auto-populator</h1>
+        <p style={{ fontSize: 13, color: '#6B6A65', marginTop: 4, lineHeight: 1.5 }}>
+          Paste your interview transcript below. AI drafts the assessment form fields for your review.
+        </p>
+      </div>
+
+      <div style={{ ...cardStyle, background: '#FFF8E8', border: '1px solid #F0DDA0' }}>
+        <div style={labelStyle}>Your Claude API key (stored only in this browser, never sent anywhere except Anthropic)</div>
+        <input
+          type="password"
+          style={inputStyle}
+          value={apiKey}
+          onChange={e => saveKey(e.target.value)}
+          placeholder="sk-ant-..."
+        />
+        <p style={{ fontSize: 11, color: '#8A7340', marginTop: 6 }}>
+          Get a key at console.anthropic.com → API Keys. This key is saved locally in your browser only.
+        </p>
+      </div>
+
+      <div style={cardStyle}>
+        <div style={sectionLabelStyle}>Step 1 — candidate details</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 10 }}>
+          <div>
+            <div style={labelStyle}>Candidate name</div>
+            <input style={inputStyle} value={candidateName} onChange={e => setCandidateName(e.target.value)} placeholder="e.g. Lee Wei Ming" />
+          </div>
+          <div>
+            <div style={labelStyle}>Interviewed by</div>
+            <input style={inputStyle} value={interviewedBy} onChange={e => setInterviewedBy(e.target.value)} placeholder="e.g. Steven, Ivan" />
+          </div>
+          <div>
+            <div style={labelStyle}>Interview date</div>
+            <input type="date" style={inputStyle} value={interviewDate} onChange={e => setInterviewDate(e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <div style={labelStyle}>Role / deployment (optional)</div>
+          <input style={inputStyle} value={roleContext} onChange={e => setRoleContext(e.target.value)} placeholder="e.g. Operations Research Analyst" />
+        </div>
+      </div>
+
+      <div style={cardStyle}>
+        <div style={sectionLabelStyle}>Step 2 — paste transcript</div>
+        <textarea
+          style={{ ...inputStyle, minHeight: 180, lineHeight: 1.6, resize: 'vertical' }}
+          value={transcript}
+          onChange={e => setTranscript(e.target.value)}
+          placeholder="Paste the full interview transcript or summary here..."
+        />
+        <div style={{ fontSize: 11, color: '#9A9890', textAlign: 'right', marginTop: 4 }}>
+          {transcript.length.toLocaleString()} characters
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        <button
+          onClick={generate}
+          disabled={loading}
+          style={{
+            background: loading ? '#94B8DC' : '#185FA5', color: '#fff', border: 'none',
+            borderRadius: 8, padding: '10px 20px', fontSize: 14, fontWeight: 600,
+            cursor: loading ? 'default' : 'pointer'
+          }}
+        >
+          {loading ? 'Analysing...' : 'Generate assessment'}
+        </button>
+        <button
+          onClick={clearAll}
+          style={{ background: '#fff', border: '1px solid #D8D6CE', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}
+        >
+          Clear
+        </button>
+      </div>
+
+      {status && <div style={{ fontSize: 12, color: '#6B6A65', marginTop: 8 }}>{status}</div>}
+      {error && <div style={{ fontSize: 12, color: '#A32D2D', background: '#FCEBEB', borderRadius: 8, padding: '8px 12px', marginTop: 8 }}>{error}</div>}
+
+      {result && (
+        <div style={{ marginTop: 32 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>AI-drafted assessment — review before use</div>
+
+          <div style={cardStyle}>
+            <div style={sectionLabelStyle}>[A] Attributes</div>
+            {result.attributes.map((a, i) => (
+              <div key={i} style={{ padding: '10px 0', borderBottom: i < result.attributes.length - 1 ? '1px solid #F0EEE6' : 'none' }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{a.name}</div>
+                <span style={{
+                  display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '2px 10px',
+                  borderRadius: 20, margin: '6px 0', color: ratingColors[a.rating] || '#5F5E5A',
+                  background: ratingBg[a.rating] || '#F1EFE8'
+                }}>{a.rating}</span>
+                <div style={{ fontSize: 12, color: '#6B6A65', lineHeight: 1.6 }}>{a.remarks}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={cardStyle}>
+            <div style={sectionLabelStyle}>[B] Skills & knowledge</div>
+            {Object.entries(result.skills).map(([key, v], i, arr) => (
+              <div key={key} style={{ padding: '10px 0', borderBottom: i < arr.length - 1 ? '1px solid #F0EEE6' : 'none' }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{key}</div>
+                <span style={{
+                  display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '2px 10px',
+                  borderRadius: 20, margin: '6px 0', color: ratingColors[v.rating] || '#5F5E5A',
+                  background: ratingBg[v.rating] || '#F1EFE8'
+                }}>{v.rating}</span>
+                <div style={{ fontSize: 12, color: '#6B6A65', lineHeight: 1.6 }}>{v.remarks}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={cardStyle}>
+            <div style={sectionLabelStyle}>[B] Justification & recommendation</div>
+            <div style={{ fontSize: 14, lineHeight: 1.7 }}>{result.justification}</div>
+          </div>
+
+          <div style={cardStyle}>
+            <div style={sectionLabelStyle}>[D] Total relevant experience</div>
+            {result.tre.map((e, i) => (
+              <div key={i} style={{ padding: '8px 0', borderBottom: i < result.tre.length - 1 ? '1px solid #F0EEE6' : 'none' }}>
+                <div style={{ fontSize: 12, color: '#9A9890' }}>{e.period}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, margin: '2px 0' }}>{e.position} — {e.company}</div>
+                <span style={{
+                  display: 'inline-block', fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 20,
+                  color: (relColors[e.relevance] || relColors[0])[0], background: (relColors[e.relevance] || relColors[0])[1]
+                }}>{e.relevance}% relevant</span>
+                {e.rationale && <div style={{ fontSize: 12, color: '#6B6A65', lineHeight: 1.6, marginTop: 4 }}>{e.rationale}</div>}
+              </div>
+            ))}
+          </div>
+
+          {result.evidenceNote && (
+            <div style={{ fontSize: 12, color: '#854F0B', background: '#FAEEDA', borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
+              {result.evidenceNote}
+            </div>
+          )}
+
+          <div style={{ fontSize: 12, color: '#854F0B', background: '#FAEEDA', borderRadius: 8, padding: '10px 12px', marginBottom: 16 }}>
+            <strong>Reminder:</strong> Section [C] Interview Outcome (Offer / KIV / Reject, deployment, proposed appointment) requires your judgment and must be completed manually.
+          </div>
+
+          <button
+            onClick={copyAssessment}
+            style={{ background: '#fff', border: '1px solid #D8D6CE', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}
+          >
+            Copy as text
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
