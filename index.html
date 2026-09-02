@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DSTA Interview Assessment Form</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PizZip/3.1.4/pizzip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F5; color: #1A1A1A; font-size: 14px; }
@@ -17,42 +15,40 @@ h1 { font-size: 20px; font-weight: 700; }
 .section-title { font-size: 13px; font-weight: 700; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #E5E3DA; }
 .section-badge { display: inline-block; background: #185FA5; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 8px; }
 .ai-badge { display: inline-block; font-size: 10px; background: #E6F1FB; color: #185FA5; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 600; vertical-align: middle; }
+.mandatory-badge { font-size: 11px; font-weight: 700; color: #A32D2D; margin-left: 6px; }
 label.field { font-size: 12px; color: #6B6A65; display: block; margin-bottom: 4px; font-weight: 500; }
-input[type=text], input[type=date], textarea {
-  width: 100%; border: 1px solid #D8D6CE; border-radius: 8px; padding: 9px 12px;
-  font-size: 14px; font-family: inherit; background: #fff; color: #1A1A1A;
-}
+input[type=text], input[type=date], textarea { width: 100%; border: 1px solid #D8D6CE; border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; background: #fff; color: #1A1A1A; }
 textarea { line-height: 1.6; resize: vertical; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .mb12 { margin-bottom: 12px; }
 .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-.radio-opt {
-  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-  padding: 6px 14px; border: 1.5px solid #D8D6CE; border-radius: 20px;
-  font-size: 13px; font-weight: 500; transition: border-color 0.12s, background 0.12s;
-  user-select: none;
-}
+.radio-opt { display: inline-flex; align-items: center; cursor: pointer; padding: 6px 14px; border: 1.5px solid #D8D6CE; border-radius: 20px; font-size: 13px; font-weight: 500; user-select: none; }
 .radio-opt:hover { border-color: #9A9890; }
-.sel-outstanding  { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
-.sel-verygood     { border-color: #0F6E56 !important; background: #E1F5EE !important; color: #0F6E56 !important; }
-.sel-good         { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
-.sel-satisfactory { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
-.sel-unsatisfactory { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
-.sel-na           { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
-.sel-yes          { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
-.sel-no           { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
-.sel-100          { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
-.sel-50           { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
-.sel-0            { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
-.sel-offer        { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
-.sel-kiv          { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
-.sel-reject       { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
-.sel-endorsed     { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
+.sel-outstanding   { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-verygood      { border-color: #0F6E56 !important; background: #E1F5EE !important; color: #0F6E56 !important; }
+.sel-good          { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
+.sel-satisfactory  { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-unsatisfactory{ border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-na            { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
+.sel-yes           { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-no            { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-100           { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-50            { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-0             { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
+.sel-offer         { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-kiv           { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-reject        { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-endorsed      { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
 .attr-block { border: 1px solid #E5E3DA; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
 .attr-block:last-child { margin-bottom: 0; }
-.attr-name { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+.attr-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.attr-descriptor { font-size: 12px; color: #9A9890; font-style: italic; margin-bottom: 10px; line-height: 1.5; }
 .remarks-label { font-size: 12px; color: #6B6A65; margin-top: 10px; margin-bottom: 4px; font-weight: 500; }
+.mandatory-remarks-label { font-size: 12px; color: #6B6A65; margin-top: 10px; margin-bottom: 4px; font-weight: 700; }
+.mid-career-box { border: 1px solid #E5E3DA; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; background: #FAFAF8; }
+.mid-career-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.mid-career-sub { font-size: 13px; margin-bottom: 10px; line-height: 1.5; }
 .tre-entry { border: 1px solid #E5E3DA; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; position: relative; }
 .tre-remove { position: absolute; top: 10px; right: 12px; background: none; border: none; color: #A32D2D; cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; }
 .add-btn { background: #fff; border: 1.5px dashed #D8D6CE; border-radius: 8px; padding: 9px 16px; font-size: 13px; color: #6B6A65; cursor: pointer; width: 100%; margin-top: 8px; font-family: inherit; }
@@ -101,7 +97,7 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
     <div class="charcount" id="charCount">0 characters</div>
     <div class="btn-row">
       <button class="primary" id="generateBtn">Generate assessment</button>
-      <button class="secondary" id="clearBtn">Clear</button>
+      <button class="secondary" id="clearBtn">Clear transcript</button>
     </div>
     <div class="status" id="status"></div>
     <div class="error-msg" id="errorMsg"></div>
@@ -119,7 +115,13 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
       <div class="section-title"><span class="section-badge">B</span> Skills, Knowledge &amp; Education <span class="ai-badge">AI pre-filled</span></div>
       <div id="skillsContainer"></div>
       <div class="divider"></div>
-      <label class="field" style="margin-bottom:8px;">Justification / Key reasons for hiring or not hiring <span class="ai-badge">AI pre-filled</span></label>
+      <div class="mid-career-box">
+        <div class="mid-career-title">[For Mid-Career Candidates Only]</div>
+        <div class="mid-career-sub">Please provide an interim assessment of the candidate's competency or competencies, along with the associated Proficiency Level(s).</div>
+        <textarea id="midCareer" rows="4" placeholder="Enter competency assessment and proficiency levels here..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <label class="field" style="font-weight:600; margin-bottom:8px;">Justification / Key reasons for hiring or not hiring <span class="ai-badge">AI pre-filled</span></label>
       <textarea id="justification" rows="5" placeholder="Enter justification..."></textarea>
     </div>
 
@@ -148,7 +150,7 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
     </div>
 
     <div class="card">
-      <div class="section-title"><span class="section-badge">D</span> Total Relevant Experience <span class="ai-badge">AI pre-filled</span></div>
+      <div class="section-title"><span class="section-badge">D</span> Total Relevant Experience <span style="font-size:11px;color:#854F0B;font-weight:400;margin-left:6px;">&#9888; Complete manually</span></div>
       <div id="treContainer"></div>
       <button class="add-btn" id="addTreBtn">+ Add employment entry</button>
     </div>
@@ -167,15 +169,50 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
 <script>
 (function () {
 
-// ?? Helpers ??????????????????????????????????????????????????????????????????
-function esc(s) {
-  var d = document.createElement('div');
-  d.textContent = s == null ? '' : String(s);
-  return d.innerHTML;
-}
-function xmlEsc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-}
+// ?? Definitions ???????????????????????????????????????????????????????????????
+var ATTRIBUTES = [
+  { name: 'Passion in Defence Engineering & Technology',
+    descriptor: 'Does the candidate demonstrate awareness and understanding of the recent advancements in defence technology?',
+    mandatory: false },
+  { name: 'Curiosity & Thirst for Learning',
+    descriptor: 'Does the candidate demonstrate curiosity and initiative to learn about the emerging technologies?',
+    mandatory: false },
+  { name: 'Drive to excel and lead others, while being a team player',
+    descriptor: 'Does the candidate demonstrate strong stakeholder management and collaboration skills in achieving intended deliverables or outcomes?',
+    mandatory: false },
+  { name: 'A keen and innovative problem solver',
+    descriptor: 'Does the candidate demonstrate innovation thinking or the ability to drive improvements?',
+    mandatory: true },
+  { name: 'Flexibility to adapt, and resilient in the face of adversity',
+    descriptor: 'Does the candidate demonstrate resilience and ability to adapt to a changing environment?',
+    mandatory: false }
+];
+
+var SKILLS = [
+  { name: 'Knowledge',
+    descriptor: 'Does the candidate have up-to-date knowledge in relevant domains (e.g. DevSecOps, Robotics, HR, Finance)?',
+    yesno: false },
+  { name: 'Skillsets',
+    descriptor: 'Does the candidate possess the relevant skillsets necessary to perform effectively in the role (e.g. programming, project management)?',
+    yesno: false },
+  { name: 'Educational Background',
+    descriptor: 'Does the candidate possess the relevant educational qualifications required for the role?',
+    yesno: true },
+  { name: 'Certification',
+    descriptor: 'Does the candidate have relevant certifications and training that would be relevant to the role?',
+    yesno: true }
+];
+
+var ATTR_RATINGS    = [{val:'Outstanding',cls:'sel-outstanding'},{val:'Very Good',cls:'sel-verygood'},{val:'Good',cls:'sel-good'},{val:'Satisfactory',cls:'sel-satisfactory'},{val:'Unsatisfactory',cls:'sel-unsatisfactory'},{val:'Not Applicable',cls:'sel-na'}];
+var YESNO_RATINGS   = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'}];
+var REL_RATINGS     = [{val:'100',cls:'sel-100',lbl:'100% — Fully relevant'},{val:'50',cls:'sel-50',lbl:'50% — Partially relevant'},{val:'0',cls:'sel-0',lbl:'0% — Not relevant'}];
+var DECISION_OPTS   = [{val:'Offer',cls:'sel-offer'},{val:'KIV',cls:'sel-kiv'},{val:'Reject',cls:'sel-reject'}];
+var ENDORSED_OPTS   = [{val:'Endorsed',cls:'sel-endorsed'},{val:'Pending',cls:'sel-satisfactory'},{val:'Not yet',cls:'sel-na'}];
+var INCENTIVE_OPTS  = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'},{val:'Not Applicable',cls:'sel-na'}];
+
+// ?? Helpers ???????????????????????????????????????????????????????????????????
+function esc(s) { var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+function x(s)   { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
 
 // ?? API key ???????????????????????????????????????????????????????????????????
 var apiKeyEl = document.getElementById('apiKey');
@@ -188,65 +225,20 @@ transcriptEl.addEventListener('input', function () {
   document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
 });
 
-// ?? Rating config ?????????????????????????????????????????????????????????????
-var ATTR_RATINGS = [
-  {val:'Outstanding',    cls:'sel-outstanding'},
-  {val:'Very Good',      cls:'sel-verygood'},
-  {val:'Good',           cls:'sel-good'},
-  {val:'Satisfactory',   cls:'sel-satisfactory'},
-  {val:'Unsatisfactory', cls:'sel-unsatisfactory'},
-  {val:'Not Applicable', cls:'sel-na'}
-];
-var YESNO_RATINGS = [
-  {val:'Yes', cls:'sel-yes'},
-  {val:'No',  cls:'sel-no'}
-];
-var REL_RATINGS = [
-  {val:'100', cls:'sel-100', lbl:'100% — Fully relevant'},
-  {val:'50',  cls:'sel-50',  lbl:'50% — Partially relevant'},
-  {val:'0',   cls:'sel-0',   lbl:'0% — Not relevant'}
-];
-var DECISION_OPTS = [
-  {val:'Offer',  cls:'sel-offer'},
-  {val:'KIV',    cls:'sel-kiv'},
-  {val:'Reject', cls:'sel-reject'}
-];
-var ENDORSED_OPTS = [
-  {val:'Endorsed', cls:'sel-endorsed'},
-  {val:'Pending',  cls:'sel-satisfactory'},
-  {val:'Not yet',  cls:'sel-na'}
-];
-var INCENTIVE_OPTS = [
-  {val:'Yes',            cls:'sel-yes'},
-  {val:'No',             cls:'sel-no'},
-  {val:'Not Applicable', cls:'sel-na'}
-];
-
-function ratingClassFor(val) {
-  var all = ATTR_RATINGS.concat(YESNO_RATINGS).concat(REL_RATINGS).concat(DECISION_OPTS).concat(ENDORSED_OPTS).concat(INCENTIVE_OPTS);
-  for (var i = 0; i < all.length; i++) {
-    if (all[i].val === String(val)) return all[i].cls;
-  }
-  return '';
-}
-
-// ?? Build a radio button group ????????????????????????????????????????????????
-function buildRadioGroup(containerId, options, selectedVal) {
-  var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+// ?? Radio builder ?????????????????????????????????????????????????????????????
+function buildRadioGroup(container, options, selectedVal) {
   container.innerHTML = '';
   options.forEach(function (opt) {
-    var val   = typeof opt === 'object' ? opt.val  : opt;
-    var label = typeof opt === 'object' ? (opt.lbl || opt.val) : opt;
-    var cls   = typeof opt === 'object' ? opt.cls  : '';
-    var btn   = document.createElement('span');
+    var val = opt.val || opt;
+    var lbl = opt.lbl || opt.val || opt;
+    var cls = opt.cls || '';
+    var btn = document.createElement('span');
     btn.className = 'radio-opt' + (String(val) === String(selectedVal) ? ' ' + cls : '');
     btn.setAttribute('data-val', val);
     btn.setAttribute('data-cls', cls);
-    btn.textContent = label;
+    btn.textContent = lbl;
     btn.addEventListener('click', function () {
-      container.querySelectorAll('.radio-opt').forEach(function (b) {
-        b.className = 'radio-opt';
-      });
+      container.querySelectorAll('.radio-opt').forEach(function (b) { b.className = 'radio-opt'; });
       btn.className = 'radio-opt ' + cls;
     });
     container.appendChild(btn);
@@ -254,109 +246,130 @@ function buildRadioGroup(containerId, options, selectedVal) {
 }
 
 function getRadioVal(container) {
+  if (!container) return '';
   var sel = container.querySelector('.radio-opt[class*="sel-"]');
   return sel ? sel.getAttribute('data-val') : '';
 }
 
-// ?? Section C static groups ???????????????????????????????????????????????????
-buildRadioGroup('decisionGrp',  DECISION_OPTS,  '');
-buildRadioGroup('endorsedGrp',  ENDORSED_OPTS,  '');
-buildRadioGroup('incentiveGrp', INCENTIVE_OPTS, '');
+// ?? Static groups ?????????????????????????????????????????????????????????????
+buildRadioGroup(document.getElementById('decisionGrp'),  DECISION_OPTS,  '');
+buildRadioGroup(document.getElementById('endorsedGrp'),  ENDORSED_OPTS,  '');
+buildRadioGroup(document.getElementById('incentiveGrp'), INCENTIVE_OPTS, '');
 
-// ?? Render attribute block ????????????????????????????????????????????????????
-function renderAttrBlock(container, name, ratingOptions, selectedRating, remarks) {
+// ?? Render attribute/skill block ??????????????????????????????????????????????
+function renderBlock(container, name, descriptor, mandatory, ratingOptions, selectedRating, remarks) {
   var div = document.createElement('div');
   div.className = 'attr-block';
+
   var nameDiv = document.createElement('div');
   nameDiv.className = 'attr-name';
-  nameDiv.textContent = name;
+  nameDiv.appendChild(document.createTextNode(name));
+  if (mandatory) {
+    var badge = document.createElement('span');
+    badge.className = 'mandatory-badge';
+    badge.textContent = ' [Mandatory]';
+    nameDiv.appendChild(badge);
+  }
   div.appendChild(nameDiv);
 
-  var radioDiv = document.createElement('div');
-  radioDiv.className = 'radio-group';
-  buildRadioGroup(radioDiv, ratingOptions, selectedRating);
-  div.appendChild(radioDiv);
+  if (descriptor) {
+    var desc = document.createElement('div');
+    desc.className = 'attr-descriptor';
+    desc.textContent = descriptor;
+    div.appendChild(desc);
+  }
+
+  var rg = document.createElement('div');
+  rg.className = 'radio-group';
+  buildRadioGroup(rg, ratingOptions, selectedRating);
+  div.appendChild(rg);
 
   var rl = document.createElement('div');
-  rl.className = 'remarks-label';
-  rl.textContent = 'Remarks';
+  if (mandatory) {
+    rl.className = 'mandatory-remarks-label';
+    rl.appendChild(document.createTextNode('Remarks '));
+    var rb = document.createElement('span');
+    rb.className = 'mandatory-badge';
+    rb.textContent = '[Mandatory]';
+    rl.appendChild(rb);
+  } else {
+    rl.className = 'remarks-label';
+    rl.textContent = 'Remarks';
+  }
   div.appendChild(rl);
 
   var ta = document.createElement('textarea');
   ta.className = 'attr-remarks';
   ta.rows = 3;
-  ta.placeholder = 'Enter remarks...';
+  ta.placeholder = mandatory ? 'Mandatory — enter specific evidence of innovative thinking...' : 'Enter remarks...';
   ta.value = remarks || '';
   div.appendChild(ta);
 
   container.appendChild(div);
 }
 
-// ?? Render attributes ?????????????????????????????????????????????????????????
-function renderAttributes(attrs) {
+// ?? Render sections ???????????????????????????????????????????????????????????
+function renderAttributes(aiData) {
   var c = document.getElementById('attrsContainer');
   c.innerHTML = '';
-  attrs.forEach(function (a) {
-    renderAttrBlock(c, a.name, ATTR_RATINGS, a.rating, a.remarks);
+  ATTRIBUTES.forEach(function (def, i) {
+    var ai = (aiData && aiData[i]) ? aiData[i] : {};
+    renderBlock(c, def.name, def.descriptor, def.mandatory, ATTR_RATINGS, ai.rating || '', ai.remarks || '');
   });
 }
 
-// ?? Render skills ?????????????????????????????????????????????????????????????
-var YESNO_KEYS = ['Educational Background', 'Certifications'];
-function renderSkills(skills) {
+function renderSkills(aiData) {
   var c = document.getElementById('skillsContainer');
   c.innerHTML = '';
-  Object.keys(skills).forEach(function (key) {
-    var v = skills[key];
-    var opts = YESNO_KEYS.indexOf(key) !== -1 ? YESNO_RATINGS : ATTR_RATINGS;
-    renderAttrBlock(c, key, opts, v.rating, v.remarks);
+  SKILLS.forEach(function (def) {
+    var ai = aiData ? (aiData[def.name] || {}) : {};
+    renderBlock(c, def.name, def.descriptor, false, def.yesno ? YESNO_RATINGS : ATTR_RATINGS, ai.rating || '', ai.remarks || '');
   });
 }
 
-// ?? Render TRE entry ??????????????????????????????????????????????????????????
-function renderTREEntry(e) {
+function renderTREEntry() {
   var container = document.getElementById('treContainer');
   var div = document.createElement('div');
   div.className = 'tre-entry';
 
-  var removeBtn = document.createElement('button');
-  removeBtn.className = 'tre-remove';
-  removeBtn.textContent = '?';
-  removeBtn.title = 'Remove';
-  removeBtn.addEventListener('click', function () { container.removeChild(div); });
-  div.appendChild(removeBtn);
+  var rm = document.createElement('button');
+  rm.className = 'tre-remove';
+  rm.textContent = '?';
+  rm.addEventListener('click', function () { container.removeChild(div); });
+  div.appendChild(rm);
 
   var row = document.createElement('div');
   row.className = 'row3';
   row.style.marginBottom = '10px';
-  ['Period','Position','Company / Organisation'].forEach(function (lbl, i) {
-    var vals = [e.period, e.position, e.company];
-    var classes = ['tre-period','tre-position','tre-company'];
-    var placeholders = ['e.g. Jan 20 - Dec 22','Job title','Company name'];
+  [['Period','tre-period','e.g. Jan 20 - Dec 22'],
+   ['Position / Job Title','tre-position','e.g. Software Engineer'],
+   ['Company / Organisation','tre-company','e.g. ST Engineering']].forEach(function (col) {
     var cell = document.createElement('div');
-    cell.innerHTML = '<label class="field">' + esc(lbl) + '</label>' +
-      '<input type="text" class="' + classes[i] + '" placeholder="' + esc(placeholders[i]) + '" value="' + esc(vals[i] || '') + '">';
+    cell.innerHTML = '<label class="field">' + esc(col[0]) + '</label><input type="text" class="' + col[1] + '" placeholder="' + esc(col[2]) + '">';
     row.appendChild(cell);
   });
   div.appendChild(row);
 
-  var relLabel = document.createElement('div');
-  relLabel.className = 'mb12';
-  relLabel.innerHTML = '<label class="field">Relevance to role</label>';
-  var relGroup = document.createElement('div');
-  relGroup.className = 'radio-group tre-rel';
-  buildRadioGroup(relGroup, REL_RATINGS, String(e.relevance));
-  relLabel.appendChild(relGroup);
-  div.appendChild(relLabel);
+  var relWrap = document.createElement('div');
+  relWrap.className = 'mb12';
+  relWrap.innerHTML = '<label class="field">Relevance to role</label>';
+  var relGrp = document.createElement('div');
+  relGrp.className = 'radio-group tre-rel';
+  buildRadioGroup(relGrp, REL_RATINGS, '');
+  relWrap.appendChild(relGrp);
+  div.appendChild(relWrap);
 
-  var rationale = document.createElement('div');
-  rationale.innerHTML = '<label class="field">Rationale</label><textarea class="tre-rationale" rows="2" placeholder="Why is this experience relevant or not?">' + esc(e.rationale || '') + '</textarea>';
-  div.appendChild(rationale);
+  var rat = document.createElement('div');
+  rat.innerHTML = '<label class="field">Rationale</label><textarea class="tre-rationale" rows="2" placeholder="Why is this experience relevant or not?"></textarea>';
+  div.appendChild(rat);
 
   container.appendChild(div);
 }
 
-document.getElementById('addTreBtn').addEventListener('click', function () { renderTREEntry({}); });
+document.getElementById('addTreBtn').addEventListener('click', renderTREEntry);
+renderTREEntry();
+renderAttributes([]);
+renderSkills({});
 
 // ?? Generate ??????????????????????????????????????????????????????????????????
 document.getElementById('generateBtn').addEventListener('click', function () {
@@ -371,73 +384,61 @@ document.getElementById('generateBtn').addEventListener('click', function () {
   if (!text) { errorEl.textContent = 'Please paste a transcript.';        errorEl.style.display = 'block'; return; }
 
   var role = document.getElementById('roleApplied').value;
+
   var prompt =
     'You are an expert HR assessor for DSTA (Defence Science and Technology Agency, Singapore).\n' +
-    'Analyse the interview transcript and return ONLY a valid JSON object — no preamble, no markdown.\n\n' +
-    'Required structure:\n' +
-    '{\n' +
-    '  "attributes": [\n' +
-    '    {"name":"Passion in Defence Engineering & Technology","rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable","remarks":"..."},\n' +
-    '    {"name":"Curiosity & Thirst for Learning","rating":"...","remarks":"..."},\n' +
-    '    {"name":"Drive to excel and lead others, while being a team player","rating":"...","remarks":"..."},\n' +
-    '    {"name":"A keen and innovative problem solver","rating":"...","remarks":"... (MANDATORY)"},\n' +
-    '    {"name":"Flexibility to adapt, and resilient in the face of adversity","rating":"...","remarks":"..."}\n' +
-    '  ],\n' +
-    '  "skills":{\n' +
-    '    "Knowledge":{"rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory","remarks":"..."},\n' +
-    '    "Skillsets":{"rating":"...","remarks":"..."},\n' +
-    '    "Educational Background":{"rating":"Yes|No","remarks":"..."},\n' +
-    '    "Certifications":{"rating":"Yes|No","remarks":"..."}\n' +
-    '  },\n' +
-    '  "justification":"Comprehensive paragraph on strengths, suitability, and hiring recommendation.",\n' +
-    '  "tre":[{"period":"MMM YY - MMM YY","position":"Job Title","company":"Company","relevance":100,"rationale":"..."}],\n' +
-    '  "evidenceNote":"Note on whether source was verbatim or summary and confidence level."\n' +
-    '}\n\n' +
-    'Rules:\n' +
-    '- Insufficient evidence -> Satisfactory + "Insufficient evidence - interviewer to verify".\n' +
-    '- "A keen and innovative problem solver" is MANDATORY.\n' +
-    '- TRE relevance: 100, 50, or 0 only.\n' +
-    '- Role context: ' + (role || 'not specified') + '.\n\n' +
-    'Transcript:\n' + text;
+    'Analyse the interview transcript using the descriptors below and return ONLY valid JSON, no preamble, no markdown.\n\n' +
+    'JSON structure:\n' +
+    '{"attributes":[' +
+    '{"name":"Passion in Defence Engineering & Technology","rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable","remarks":"..."},' +
+    '{"name":"Curiosity & Thirst for Learning","rating":"...","remarks":"..."},' +
+    '{"name":"Drive to excel and lead others, while being a team player","rating":"...","remarks":"..."},' +
+    '{"name":"A keen and innovative problem solver","rating":"...","remarks":"... MANDATORY with specific evidence"},' +
+    '{"name":"Flexibility to adapt, and resilient in the face of adversity","rating":"...","remarks":"..."}],' +
+    '"skills":{' +
+    '"Knowledge":{"rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory","remarks":"..."},' +
+    '"Skillsets":{"rating":"...","remarks":"..."},' +
+    '"Educational Background":{"rating":"Yes|No","remarks":"..."},' +
+    '"Certification":{"rating":"Yes|No","remarks":"..."}},' +
+    '"justification":"Comprehensive paragraph on strengths, suitability, and hiring recommendation.",' +
+    '"evidenceNote":"Note on whether source was verbatim or summary and confidence level."}\n\n' +
+    'Descriptors to guide ratings:\n' +
+    '- Passion in Defence Engineering & Technology: Does the candidate demonstrate awareness and understanding of the recent advancements in defence technology?\n' +
+    '- Curiosity & Thirst for Learning: Does the candidate demonstrate curiosity and initiative to learn about the emerging technologies?\n' +
+    '- Drive to excel and lead others, while being a team player: Does the candidate demonstrate strong stakeholder management and collaboration skills in achieving intended deliverables or outcomes?\n' +
+    '- A keen and innovative problem solver [MANDATORY — always rate]: Does the candidate demonstrate innovation thinking or the ability to drive improvements?\n' +
+    '- Flexibility to adapt, and resilient in the face of adversity: Does the candidate demonstrate resilience and ability to adapt to a changing environment?\n' +
+    '- Knowledge: Does the candidate have up-to-date knowledge in relevant domains (e.g. DevSecOps, Robotics, HR, Finance)?\n' +
+    '- Skillsets: Does the candidate possess the relevant skillsets necessary to perform effectively in the role (e.g. programming, project management)?\n' +
+    '- Educational Background: Does the candidate possess the relevant educational qualifications required for the role?\n' +
+    '- Certification: Does the candidate have relevant certifications and training that would be relevant to the role?\n\n' +
+    'Rules: Outstanding > Very Good > Good > Satisfactory > Unsatisfactory. Not Applicable only if truly no basis.\n' +
+    'Insufficient evidence: use Satisfactory + "Insufficient evidence — interviewer to verify".\n' +
+    'Do NOT generate TRE — completed manually.\n' +
+    'Role context: ' + (role || 'not specified') + '.\n\nTranscript:\n' + text;
 
-  btn.disabled = true;
-  btn.textContent = 'Analysing...';
+  btn.disabled = true; btn.textContent = 'Analysing...';
   statusEl.textContent = 'Sending to AI...';
 
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
   })
   .then(function (r) {
     if (!r.ok) return r.text().then(function (t) { throw new Error('API ' + r.status + ': ' + t.slice(0,200)); });
     return r.json();
   })
   .then(function (data) {
-    statusEl.textContent = 'Parsing...';
-    var raw   = data.content.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('');
+    statusEl.textContent = 'Parsing response...';
+    var raw   = data.content.filter(function (b) { return b.type==='text'; }).map(function (b) { return b.text; }).join('');
     var clean = raw.replace(/```json|```/g,'').trim();
     var p     = JSON.parse(clean);
-
     renderAttributes(p.attributes || []);
     renderSkills(p.skills || {});
     document.getElementById('justification').value = p.justification || '';
-    document.getElementById('treContainer').innerHTML = '';
-    (p.tre || []).forEach(function (e) { renderTREEntry(e); });
-
     var nb = document.getElementById('evidenceNoteBox');
-    if (p.evidenceNote) { nb.textContent = p.evidenceNote; nb.style.display = 'block'; }
-    else                { nb.style.display = 'none'; }
-
+    if (p.evidenceNote) { nb.textContent = p.evidenceNote; nb.style.display = 'block'; } else { nb.style.display = 'none'; }
     document.getElementById('formSection').style.display = 'block';
     document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
     statusEl.textContent = 'Form pre-filled. Review and edit, then download.';
@@ -447,10 +448,7 @@ document.getElementById('generateBtn').addEventListener('click', function () {
     errorEl.style.display = 'block';
     statusEl.textContent = '';
   })
-  .finally(function () {
-    btn.disabled = false;
-    btn.textContent = 'Generate assessment';
-  });
+  .finally(function () { btn.disabled = false; btn.textContent = 'Generate assessment'; });
 });
 
 // ?? Clear / Reset ?????????????????????????????????????????????????????????????
@@ -461,193 +459,247 @@ document.getElementById('clearBtn').addEventListener('click', function () {
 
 document.getElementById('resetBtn').addEventListener('click', function () {
   if (!confirm('Start new assessment? Current data will be cleared.')) return;
-  ['candidateName','interviewedBy','roleApplied','programmeCentre','deployment','proposedAppt','outcomeRemarks','justification'].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.value = '';
-  });
+  ['candidateName','interviewedBy','roleApplied','programmeCentre','deployment','proposedAppt','outcomeRemarks','justification','midCareer'].forEach(function (id) { var el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('interviewDate').value = '';
-  transcriptEl.value = '';
-  document.getElementById('charCount').textContent = '0 characters';
+  transcriptEl.value = ''; document.getElementById('charCount').textContent = '0 characters';
+  renderAttributes([]); renderSkills({});
+  document.getElementById('treContainer').innerHTML = ''; renderTREEntry();
+  ['decisionGrp','endorsedGrp','incentiveGrp'].forEach(function (id) { document.getElementById(id).querySelectorAll('.radio-opt').forEach(function (b) { b.className='radio-opt'; }); });
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('status').textContent = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 });
 
-// ?? Collect form data ?????????????????????????????????????????????????????????
+// ?? Collect form ??????????????????????????????????????????????????????????????
 function collectForm() {
   var attrs = [];
   document.getElementById('attrsContainer').querySelectorAll('.attr-block').forEach(function (b) {
-    attrs.push({
-      name:    b.querySelector('.attr-name').textContent,
-      rating:  getRadioVal(b.querySelector('.radio-group')),
-      remarks: b.querySelector('.attr-remarks').value
-    });
+    attrs.push({ name: b.querySelector('.attr-name').childNodes[0].textContent.trim(), rating: getRadioVal(b.querySelector('.radio-group')), remarks: b.querySelector('.attr-remarks').value });
   });
-
   var skills = [];
   document.getElementById('skillsContainer').querySelectorAll('.attr-block').forEach(function (b) {
-    skills.push({
-      name:    b.querySelector('.attr-name').textContent,
-      rating:  getRadioVal(b.querySelector('.radio-group')),
-      remarks: b.querySelector('.attr-remarks').value
-    });
+    skills.push({ name: b.querySelector('.attr-name').childNodes[0].textContent.trim(), rating: getRadioVal(b.querySelector('.radio-group')), remarks: b.querySelector('.attr-remarks').value });
   });
-
   var tre = [];
   document.getElementById('treContainer').querySelectorAll('.tre-entry').forEach(function (e) {
-    tre.push({
-      period:    e.querySelector('.tre-period').value,
-      position:  e.querySelector('.tre-position').value,
-      company:   e.querySelector('.tre-company').value,
-      relevance: getRadioVal(e.querySelector('.tre-rel')),
-      rationale: e.querySelector('.tre-rationale').value
-    });
+    tre.push({ period: e.querySelector('.tre-period').value, position: e.querySelector('.tre-position').value, company: e.querySelector('.tre-company').value, relevance: getRadioVal(e.querySelector('.tre-rel')), rationale: e.querySelector('.tre-rationale').value });
   });
-
   return {
-    candidateName:   document.getElementById('candidateName').value,
-    interviewedBy:   document.getElementById('interviewedBy').value,
-    interviewDate:   document.getElementById('interviewDate').value,
-    roleApplied:     document.getElementById('roleApplied').value,
+    candidateName: document.getElementById('candidateName').value,
+    interviewedBy: document.getElementById('interviewedBy').value,
+    interviewDate: document.getElementById('interviewDate').value,
+    roleApplied: document.getElementById('roleApplied').value,
     programmeCentre: document.getElementById('programmeCentre').value,
-    attributes:      attrs,
-    skills:          skills,
-    justification:   document.getElementById('justification').value,
-    decision:        getRadioVal(document.getElementById('decisionGrp')),
-    endorsed:        getRadioVal(document.getElementById('endorsedGrp')),
-    deployment:      document.getElementById('deployment').value,
-    proposedAppt:    document.getElementById('proposedAppt').value,
-    incentive:       getRadioVal(document.getElementById('incentiveGrp')),
-    outcomeRemarks:  document.getElementById('outcomeRemarks').value,
-    tre:             tre
+    attributes: attrs, skills: skills,
+    midCareer: document.getElementById('midCareer').value,
+    justification: document.getElementById('justification').value,
+    decision: getRadioVal(document.getElementById('decisionGrp')),
+    endorsed: getRadioVal(document.getElementById('endorsedGrp')),
+    deployment: document.getElementById('deployment').value,
+    proposedAppt: document.getElementById('proposedAppt').value,
+    incentive: getRadioVal(document.getElementById('incentiveGrp')),
+    outcomeRemarks: document.getElementById('outcomeRemarks').value,
+    tre: tre
   };
 }
 
-// ?? DOCX export ???????????????????????????????????????????????????????????????
+// ???????????????????????????????????????????????????????????????????????????????
+// DOCX EXPORT — pure JS, zero external dependencies
+// ???????????????????????????????????????????????????????????????????????????????
+
+// ?? Minimal ZIP implementation ????????????????????????????????????????????????
+function strToU8(str) {
+  var bytes = [];
+  for (var i = 0; i < str.length; i++) {
+    var c = str.charCodeAt(i);
+    if (c < 0x80) { bytes.push(c); }
+    else if (c < 0x800) { bytes.push(0xC0|(c>>6), 0x80|(c&0x3F)); }
+    else { bytes.push(0xE0|(c>>12), 0x80|((c>>6)&0x3F), 0x80|(c&0x3F)); }
+  }
+  return new Uint8Array(bytes);
+}
+
+function u32LE(n) { return [n&0xFF,(n>>8)&0xFF,(n>>16)&0xFF,(n>>24)&0xFF]; }
+function u16LE(n) { return [n&0xFF,(n>>8)&0xFF]; }
+
+function crc32(buf) {
+  var table = crc32.t;
+  if (!table) {
+    table = crc32.t = new Uint32Array(256);
+    for (var i=0;i<256;i++) { var c=i; for(var j=0;j<8;j++) c=c&1?(0xEDB88320^(c>>>1)):(c>>>1); table[i]=c; }
+  }
+  var crc = 0xFFFFFFFF;
+  for (var k=0;k<buf.length;k++) crc=(crc>>>8)^table[(crc^buf[k])&0xFF];
+  return (crc^0xFFFFFFFF)>>>0;
+}
+
+function makeZip(files) {
+  var centralDir = [];
+  var parts = [];
+  var offset = 0;
+
+  files.forEach(function (f) {
+    var nameBytes  = strToU8(f.name);
+    var dataBytes  = strToU8(f.data);
+    var crc        = crc32(dataBytes);
+    var localHeader = [].concat(
+      [0x50,0x4B,0x03,0x04], // signature
+      u16LE(20),              // version needed
+      u16LE(0),               // flags
+      u16LE(0),               // compression (stored)
+      u16LE(0), u16LE(0),     // mod time/date
+      u32LE(crc),
+      u32LE(dataBytes.length),
+      u32LE(dataBytes.length),
+      u16LE(nameBytes.length),
+      u16LE(0)                // extra len
+    );
+    centralDir.push({ nameBytes:nameBytes, dataBytes:dataBytes, crc:crc, offset:offset });
+    parts.push(new Uint8Array(localHeader));
+    parts.push(nameBytes);
+    parts.push(dataBytes);
+    offset += localHeader.length + nameBytes.length + dataBytes.length;
+  });
+
+  var cdStart = offset;
+  centralDir.forEach(function (f) {
+    var cd = [].concat(
+      [0x50,0x4B,0x01,0x02],
+      u16LE(20), u16LE(20),
+      u16LE(0), u16LE(0),
+      u16LE(0), u16LE(0), u16LE(0),
+      u32LE(f.crc),
+      u32LE(f.dataBytes.length),
+      u32LE(f.dataBytes.length),
+      u16LE(f.nameBytes.length),
+      u16LE(0), u16LE(0), u16LE(0), u16LE(0),
+      u32LE(0),
+      u32LE(f.offset)
+    );
+    parts.push(new Uint8Array(cd));
+    parts.push(f.nameBytes);
+  });
+  var cdSize = 0;
+  centralDir.forEach(function (f) { cdSize += 46 + f.nameBytes.length; });
+
+  var eocd = [].concat(
+    [0x50,0x4B,0x05,0x06],
+    u16LE(0), u16LE(0),
+    u16LE(centralDir.length),
+    u16LE(centralDir.length),
+    u32LE(cdSize),
+    u32LE(cdStart),
+    u16LE(0)
+  );
+  parts.push(new Uint8Array(eocd));
+
+  var total = parts.reduce(function (a,b) { return a+b.length; }, 0);
+  var out   = new Uint8Array(total);
+  var pos   = 0;
+  parts.forEach(function (p) { out.set(p, pos); pos += p.length; });
+  return out;
+}
+
+// ?? DOCX XML builders ?????????????????????????????????????????????????????????
+function wp(text, bold, sz, color) {
+  var rPr = (bold?'<w:b/><w:bCs/>':'') + (sz?'<w:sz w:val="'+sz+'"/><w:szCs w:val="'+sz+'"/>':'') + (color?'<w:color w:val="'+color+'"/>':'');
+  return '<w:p><w:pPr><w:spacing w:after="80"/></w:pPr><w:r>'+(rPr?'<w:rPr>'+rPr+'</w:rPr>':'')+'<w:t xml:space="preserve">'+x(text)+'</w:t></w:r></w:p>';
+}
+function secHeader(letter, title) {
+  return '<w:p><w:pPr><w:spacing w:before="240" w:after="120"/><w:shd w:val="clear" w:color="auto" w:fill="185FA5"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="24"/><w:color w:val="FFFFFF"/></w:rPr><w:t xml:space="preserve"> ['+x(letter)+'] '+x(title)+' </w:t></w:r></w:p>';
+}
+function lv(label, value) {
+  return '<w:p><w:pPr><w:spacing w:after="60"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(label)+': </w:t></w:r>' +
+    '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(value||'—')+'</w:t></w:r></w:p>';
+}
+function attrDocBlock(a, descriptor, mandatory) {
+  var nameRun = '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(a.name)+'</w:t></w:r>';
+  if (mandatory) nameRun += '<w:r><w:rPr><w:b/><w:sz w:val="20"/><w:color w:val="A32D2D"/></w:rPr><w:t xml:space="preserve"> [Mandatory]</w:t></w:r>';
+  var out = '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/><w:shd w:val="clear" w:color="auto" w:fill="EEF4FF"/></w:pPr>'+nameRun+'</w:p>';
+  if (descriptor) out += '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr><w:r><w:rPr><w:i/><w:sz w:val="18"/><w:color w:val="9A9890"/></w:rPr><w:t xml:space="preserve">'+x(descriptor)+'</w:t></w:r></w:p>';
+  out += '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/><w:color w:val="185FA5"/></w:rPr><w:t xml:space="preserve">Rating: </w:t></w:r><w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(a.rating||'—')+'</w:t></w:r></w:p>';
+  var remarksLbl = mandatory ? 'Remarks [Mandatory]: ' : 'Remarks: ';
+  out += '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/><w:color w:val="185FA5"/></w:rPr><w:t xml:space="preserve">'+x(remarksLbl)+'</w:t></w:r><w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(a.remarks||'—')+'</w:t></w:r></w:p>';
+  return out;
+}
+function treDocBlock(e) {
+  return '<w:p><w:pPr><w:spacing w:before="100" w:after="40"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(e.position||'—')+' — '+x(e.company||'—')+'</w:t></w:r></w:p>' +
+    lv('Period', e.period) + lv('Relevance', e.relevance ? e.relevance+'%' : '—') + lv('Rationale', e.rationale);
+}
+
+function buildDocXml(d) {
+  var NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  var body = '';
+  body += '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="60"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="185FA5"/></w:rPr><w:t>DSTA Interview Assessment Form</w:t></w:r></w:p>';
+  body += lv('Candidate', d.candidateName) + lv('Interviewed by', d.interviewedBy) + lv('Date', d.interviewDate) + lv('Role applied for', d.roleApplied) + lv('Programme Centre', d.programmeCentre);
+  body += secHeader('A', 'Attributes');
+  d.attributes.forEach(function (a, i) { body += attrDocBlock(a, (ATTRIBUTES[i]||{}).descriptor, (ATTRIBUTES[i]||{}).mandatory); });
+  body += secHeader('B', 'Skills, Knowledge & Education');
+  d.skills.forEach(function (s, i) { body += attrDocBlock(s, (SKILLS[i]||{}).descriptor, false); });
+  body += '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t>[For Mid-Career Candidates Only]</w:t></w:r></w:p>';
+  body += '<w:p><w:pPr><w:spacing w:after="40"/></w:pPr><w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">Please provide an interim assessment of the candidate\'s competency or competencies, along with the associated Proficiency Level(s).</w:t></w:r></w:p>';
+  body += '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr><w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(d.midCareer||'—')+'</w:t></w:r></w:p>';
+  body += '<w:p><w:pPr><w:spacing w:before="80" w:after="40"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t>Justification / Key reasons for hiring or not hiring</w:t></w:r></w:p>';
+  body += '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr><w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">'+x(d.justification||'—')+'</w:t></w:r></w:p>';
+  body += secHeader('C', 'Interview Outcome');
+  body += lv('Decision', d.decision) + lv('Endorsed by PC Head', d.endorsed) + lv('Deployment', d.deployment) + lv('Proposed appointment / grade', d.proposedAppt) + lv('Eligible for ICT / UXD Incentive', d.incentive) + lv('Additional remarks', d.outcomeRemarks);
+  body += secHeader('D', 'Total Relevant Experience');
+  if (d.tre && d.tre.length) { d.tre.forEach(function (e) { body += treDocBlock(e); }); } else { body += wp('—', false, 20, null); }
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document '+NS+'><w:body>' +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>' +
+    body + '</w:body></w:document>';
+}
+
+// ?? Export button ?????????????????????????????????????????????????????????????
 document.getElementById('exportBtn').addEventListener('click', function () {
   var d = collectForm();
   var statusEl = document.getElementById('exportStatus');
   statusEl.textContent = 'Generating Word document...';
   try {
-    var zip = new PizZip();
-    zip.file('[Content_Types].xml',
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    var CT = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
       '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
-      '<Default Extension="xml"  ContentType="application/xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
       '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
-      '<Override PartName="/word/styles.xml"   ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
-      '</Types>');
-    zip.file('_rels/.rels',
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+      '</Types>';
+    var RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
       '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
-      '</Relationships>');
-    zip.file('word/_rels/document.xml.rels',
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '</Relationships>';
+    var WRELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
       '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
-      '</Relationships>');
-    zip.file('word/styles.xml',
-      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '</Relationships>';
+    var STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
       '<w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/>' +
-      '<w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>' +
-      '</w:styles>');
-    zip.file('word/document.xml', buildDocXml(d));
+      '<w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style></w:styles>';
 
-    var blob = zip.generate({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-    var fname = 'Interview_Assessment_' + (d.candidateName || 'Candidate').replace(/\s+/g,'_') + '_' + (d.interviewDate || 'Date') + '.docx';
-    saveAs(blob, fname);
+    var zipBytes = makeZip([
+      { name: '[Content_Types].xml',       data: CT },
+      { name: '_rels/.rels',               data: RELS },
+      { name: 'word/_rels/document.xml.rels', data: WRELS },
+      { name: 'word/styles.xml',           data: STYLES },
+      { name: 'word/document.xml',         data: buildDocXml(d) }
+    ]);
+
+    var blob  = new Blob([zipBytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    var fname = 'Interview_Assessment_' + (d.candidateName||'Candidate').replace(/\s+/g,'_') + '_' + (d.interviewDate||'Date') + '.docx';
+    var url   = URL.createObjectURL(blob);
+    var a     = document.createElement('a');
+    a.href    = url; a.download = fname;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     statusEl.textContent = 'Downloaded: ' + fname;
   } catch(e) {
     statusEl.textContent = 'Export failed: ' + e.message;
+    console.error(e);
   }
 });
-
-function p(text, bold, size, color) {
-  var rPr = '';
-  if (bold)  rPr += '<w:b/><w:bCs/>';
-  if (size)  rPr += '<w:sz w:val="' + size + '"/><w:szCs w:val="' + size + '"/>';
-  if (color) rPr += '<w:color w:val="' + color + '"/>';
-  return '<w:p><w:pPr><w:spacing w:after="80"/></w:pPr>' +
-    '<w:r>' + (rPr ? '<w:rPr>' + rPr + '</w:rPr>' : '') +
-    '<w:t xml:space="preserve">' + xmlEsc(text) + '</w:t></w:r></w:p>';
-}
-
-function secHeader(letter, title) {
-  return '<w:p><w:pPr><w:spacing w:before="240" w:after="120"/>' +
-    '<w:shd w:val="clear" w:color="auto" w:fill="185FA5"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="24"/><w:color w:val="FFFFFF"/></w:rPr>' +
-    '<w:t xml:space="preserve"> [' + xmlEsc(letter) + '] ' + xmlEsc(title) + ' </w:t></w:r></w:p>';
-}
-
-function lv(label, value) {
-  return '<w:p><w:pPr><w:spacing w:after="60"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(label) + ': </w:t></w:r>' +
-    '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(value || '—') + '</w:t></w:r></w:p>';
-}
-
-function attrBlock(a) {
-  return '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/>' +
-    '<w:shd w:val="clear" w:color="auto" w:fill="EEF4FF"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr>' +
-    '<w:t xml:space="preserve">' + xmlEsc(a.name) + '</w:t></w:r></w:p>' +
-    lv('Rating', a.rating) +
-    lv('Remarks', a.remarks);
-}
-
-function treBlock(e) {
-  return '<w:p><w:pPr><w:spacing w:before="100" w:after="40"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr>' +
-    '<w:t xml:space="preserve">' + xmlEsc(e.position) + ' — ' + xmlEsc(e.company) + '</w:t></w:r></w:p>' +
-    lv('Period', e.period) +
-    lv('Relevance', e.relevance + '%') +
-    lv('Rationale', e.rationale);
-}
-
-function buildDocXml(d) {
-  var body = '';
-  // Title
-  body += '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="60"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="185FA5"/></w:rPr>' +
-    '<w:t>DSTA Interview Assessment Form</w:t></w:r></w:p>';
-  // Header
-  body += lv('Candidate', d.candidateName);
-  body += lv('Interviewed by', d.interviewedBy);
-  body += lv('Date', d.interviewDate);
-  body += lv('Role applied for', d.roleApplied);
-  body += lv('Programme Centre', d.programmeCentre);
-  // A
-  body += secHeader('A', 'Attributes');
-  d.attributes.forEach(function (a) { body += attrBlock(a); });
-  // B
-  body += secHeader('B', 'Skills, Knowledge & Education');
-  d.skills.forEach(function (s) { body += attrBlock(s); });
-  body += '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/></w:pPr>' +
-    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t>Justification / Hiring recommendation</w:t></w:r></w:p>';
-  body += '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr>' +
-    '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(d.justification) + '</w:t></w:r></w:p>';
-  // C
-  body += secHeader('C', 'Interview Outcome');
-  body += lv('Decision', d.decision);
-  body += lv('Endorsed by PC Head', d.endorsed);
-  body += lv('Deployment', d.deployment);
-  body += lv('Proposed appointment / grade', d.proposedAppt);
-  body += lv('Eligible for ICT / UXD Incentive', d.incentive);
-  body += lv('Additional remarks', d.outcomeRemarks);
-  // D
-  body += secHeader('D', 'Total Relevant Experience');
-  d.tre.forEach(function (e) { body += treBlock(e); });
-
-  var NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ' +
-           'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
-  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<w:document ' + NS + '><w:body>' +
-    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
-    '<w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/>' +
-    '</w:sectPr>' + body + '</w:body></w:document>';
-}
 
 })();
 </script>
