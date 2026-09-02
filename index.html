@@ -3,377 +3,652 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interview Assessment Auto-Populator</title>
+<title>DSTA Interview Assessment Form</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PizZip/3.1.4/pizzip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F5; color: #1A1A1A; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
-  h1 { font-size: 20px; font-weight: 600; }
-  .sub { font-size: 13px; color: #6B6A65; margin-top: 4px; line-height: 1.5; }
-  .card { background: #fff; border: 1px solid #E5E3DA; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
-  .keycard { background: #FFF8E8; border: 1px solid #F0DDA0; }
-  .section-label { font-size: 11px; font-weight: 600; color: #9A9890; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-  label.field { font-size: 12px; color: #6B6A65; display: block; margin-bottom: 4px; }
-  input, textarea {
-    width: 100%; border: 1px solid #D8D6CE; border-radius: 8px; padding: 9px 12px;
-    font-size: 14px; font-family: inherit; background: #fff;
-  }
-  textarea { min-height: 180px; line-height: 1.6; resize: vertical; }
-  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .charcount { font-size: 11px; color: #9A9890; text-align: right; margin-top: 4px; }
-  .actions { display: flex; gap: 10px; align-items: center; }
-  button { border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer; font-family: inherit; }
-  .btn-primary { background: #185FA5; color: #fff; font-weight: 600; }
-  .btn-primary:disabled { background: #94B8DC; cursor: default; }
-  .btn-secondary { background: #fff; border: 1px solid #D8D6CE; color: #1A1A1A; }
-  .status { font-size: 12px; color: #6B6A65; margin-top: 8px; min-height: 16px; }
-  .error { font-size: 12px; color: #A32D2D; background: #FCEBEB; border-radius: 8px; padding: 8px 12px; margin-top: 8px; display: none; }
-  .hint { font-size: 11px; color: #8A7340; margin-top: 6px; }
-  .results { display: none; margin-top: 32px; }
-  .results-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
-  .attr-row { padding: 10px 0; border-bottom: 1px solid #F0EEE6; }
-  .attr-row:last-child { border-bottom: none; }
-  .attr-name { font-size: 14px; font-weight: 600; }
-  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; margin: 6px 0; }
-  .attr-remarks { font-size: 12px; color: #6B6A65; line-height: 1.6; }
-  .tre-row { padding: 8px 0; border-bottom: 1px solid #F0EEE6; }
-  .tre-row:last-child { border-bottom: none; }
-  .tre-period { font-size: 12px; color: #9A9890; }
-  .tre-position { font-size: 14px; font-weight: 600; margin: 2px 0; }
-  .note-box { font-size: 12px; color: #854F0B; background: #FAEEDA; border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F5; color: #1A1A1A; font-size: 14px; }
+.wrap { max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; }
+h1 { font-size: 20px; font-weight: 700; }
+.sub { font-size: 13px; color: #6B6A65; margin-top: 4px; line-height: 1.5; }
+.card { background: #fff; border: 1px solid #E5E3DA; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+.keycard { background: #FFF8E8; border: 1px solid #F0DDA0; }
+.section-title { font-size: 13px; font-weight: 700; color: #1A1A1A; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #E5E3DA; }
+.section-badge { display: inline-block; background: #185FA5; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 8px; }
+.ai-badge { display: inline-block; font-size: 10px; background: #E6F1FB; color: #185FA5; border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 600; vertical-align: middle; }
+label.field { font-size: 12px; color: #6B6A65; display: block; margin-bottom: 4px; font-weight: 500; }
+input[type=text], input[type=date], textarea {
+  width: 100%; border: 1px solid #D8D6CE; border-radius: 8px; padding: 9px 12px;
+  font-size: 14px; font-family: inherit; background: #fff; color: #1A1A1A;
+}
+textarea { line-height: 1.6; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.mb12 { margin-bottom: 12px; }
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.radio-opt {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 6px 14px; border: 1.5px solid #D8D6CE; border-radius: 20px;
+  font-size: 13px; font-weight: 500; transition: border-color 0.12s, background 0.12s;
+  user-select: none;
+}
+.radio-opt:hover { border-color: #9A9890; }
+.sel-outstanding  { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-verygood     { border-color: #0F6E56 !important; background: #E1F5EE !important; color: #0F6E56 !important; }
+.sel-good         { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
+.sel-satisfactory { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-unsatisfactory { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-na           { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
+.sel-yes          { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-no           { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-100          { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-50           { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-0            { border-color: #5F5E5A !important; background: #F1EFE8 !important; color: #5F5E5A !important; }
+.sel-offer        { border-color: #1B7F3A !important; background: #EAF3DE !important; color: #1B7F3A !important; }
+.sel-kiv          { border-color: #854F0B !important; background: #FAEEDA !important; color: #854F0B !important; }
+.sel-reject       { border-color: #A32D2D !important; background: #FCEBEB !important; color: #A32D2D !important; }
+.sel-endorsed     { border-color: #185FA5 !important; background: #E6F1FB !important; color: #185FA5 !important; }
+.attr-block { border: 1px solid #E5E3DA; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+.attr-block:last-child { margin-bottom: 0; }
+.attr-name { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+.remarks-label { font-size: 12px; color: #6B6A65; margin-top: 10px; margin-bottom: 4px; font-weight: 500; }
+.tre-entry { border: 1px solid #E5E3DA; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; position: relative; }
+.tre-remove { position: absolute; top: 10px; right: 12px; background: none; border: none; color: #A32D2D; cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; }
+.add-btn { background: #fff; border: 1.5px dashed #D8D6CE; border-radius: 8px; padding: 9px 16px; font-size: 13px; color: #6B6A65; cursor: pointer; width: 100%; margin-top: 8px; font-family: inherit; }
+.add-btn:hover { border-color: #185FA5; color: #185FA5; }
+.btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+button.primary { background: #185FA5; color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+button.primary:disabled { background: #94B8DC; cursor: default; }
+button.secondary { background: #fff; border: 1.5px solid #D8D6CE; border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer; font-family: inherit; color: #1A1A1A; }
+button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.status { font-size: 12px; color: #6B6A65; margin-top: 8px; min-height: 16px; }
+.error-msg { font-size: 12px; color: #A32D2D; background: #FCEBEB; border-radius: 8px; padding: 8px 12px; margin-top: 8px; display: none; }
+.note-box { font-size: 12px; color: #854F0B; background: #FAEEDA; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.5; }
+.hint { font-size: 11px; color: #8A7340; margin-top: 6px; }
+.charcount { font-size: 11px; color: #9A9890; text-align: right; margin-top: 4px; }
+.divider { border: none; border-top: 1px solid #E5E3DA; margin: 16px 0; }
+#formSection { display: none; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Interview assessment auto-populator</h1>
-  <p class="sub">Paste your interview transcript below. AI drafts the assessment form fields for your review.</p>
+  <h1>DSTA Interview Assessment Form</h1>
+  <p class="sub">Paste a transcript and click Generate. AI pre-fills the form — review, edit, then download as Word.</p>
 
   <div class="card keycard">
-    <label class="field">Your Claude API key (stored only in this browser, never sent anywhere except Anthropic)</label>
+    <label class="field">Claude API key (saved in this browser only)</label>
     <input type="password" id="apiKey" placeholder="sk-ant-...">
-    <p class="hint">Get a key at console.anthropic.com &rarr; API Keys. Saved locally in your browser only.</p>
+    <p class="hint">Get a key at console.anthropic.com &rarr; API Keys.</p>
   </div>
 
   <div class="card">
-    <div class="section-label">Step 1 &mdash; candidate details</div>
+    <div class="section-title"><span class="section-badge">HEADER</span> Candidate Details</div>
     <div class="row3">
-      <div>
-        <label class="field">Candidate name</label>
-        <input type="text" id="candidateName" placeholder="e.g. Lee Wei Ming">
-      </div>
-      <div>
-        <label class="field">Interviewed by</label>
-        <input type="text" id="interviewedBy" placeholder="e.g. Steven, Ivan">
-      </div>
-      <div>
-        <label class="field">Interview date</label>
-        <input type="date" id="interviewDate">
-      </div>
+      <div><label class="field">Candidate name</label><input type="text" id="candidateName" placeholder="Full name"></div>
+      <div><label class="field">Interviewed by</label><input type="text" id="interviewedBy" placeholder="e.g. Steven, Ivan"></div>
+      <div><label class="field">Interview date</label><input type="date" id="interviewDate"></div>
     </div>
-    <div>
-      <label class="field">Role / deployment (optional)</label>
-      <input type="text" id="roleContext" placeholder="e.g. Operations Research Analyst">
+    <div class="row2">
+      <div><label class="field">Role applied for</label><input type="text" id="roleApplied" placeholder="e.g. Operations Research Analyst"></div>
+      <div><label class="field">Programme Centre</label><input type="text" id="programmeCentre" placeholder="e.g. C4I Programme Centre"></div>
     </div>
   </div>
 
   <div class="card">
-    <div class="section-label">Step 2 &mdash; paste transcript</div>
-    <textarea id="transcript" placeholder="Paste the full interview transcript or summary here..."></textarea>
+    <div class="section-title">Transcript Input</div>
+    <textarea id="transcript" rows="8" placeholder="Paste the full interview transcript or summary here, then click Generate Assessment..."></textarea>
     <div class="charcount" id="charCount">0 characters</div>
+    <div class="btn-row">
+      <button class="primary" id="generateBtn">Generate assessment</button>
+      <button class="secondary" id="clearBtn">Clear</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="error-msg" id="errorMsg"></div>
   </div>
 
-  <div class="actions">
-    <button class="btn-primary" id="generateBtn">Generate assessment</button>
-    <button class="btn-secondary" id="clearBtn">Clear</button>
-  </div>
-  <div class="status" id="status"></div>
-  <div class="error" id="errorMsg"></div>
-
-  <div class="results" id="results">
-    <div class="results-title">AI-drafted assessment &mdash; review before use</div>
-
-    <div class="card">
-      <div class="section-label">[A] Attributes</div>
-      <div id="attributesOutput"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-label">[B] Skills &amp; knowledge</div>
-      <div id="skillsOutput"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-label">[B] Justification &amp; recommendation</div>
-      <div id="justificationOutput" style="font-size:14px; line-height:1.7;"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-label">[D] Total relevant experience</div>
-      <div id="treOutput"></div>
-    </div>
-
+  <div id="formSection">
     <div class="note-box" id="evidenceNoteBox" style="display:none;"></div>
 
-    <div class="note-box">
-      <strong>Reminder:</strong> Section [C] Interview Outcome (Offer / KIV / Reject, deployment, proposed appointment) requires your judgment and must be completed manually.
+    <div class="card">
+      <div class="section-title"><span class="section-badge">A</span> Attributes <span class="ai-badge">AI pre-filled</span></div>
+      <div id="attrsContainer"></div>
     </div>
 
-    <button class="btn-secondary" id="copyBtn">Copy as text</button>
+    <div class="card">
+      <div class="section-title"><span class="section-badge">B</span> Skills, Knowledge &amp; Education <span class="ai-badge">AI pre-filled</span></div>
+      <div id="skillsContainer"></div>
+      <div class="divider"></div>
+      <label class="field" style="margin-bottom:8px;">Justification / Key reasons for hiring or not hiring <span class="ai-badge">AI pre-filled</span></label>
+      <textarea id="justification" rows="5" placeholder="Enter justification..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="section-badge">C</span> Interview Outcome <span style="font-size:11px;color:#854F0B;font-weight:400;margin-left:6px;">&#9888; Complete manually</span></div>
+      <div class="mb12">
+        <label class="field">Decision</label>
+        <div class="radio-group" id="decisionGrp"></div>
+      </div>
+      <div class="mb12">
+        <label class="field">Endorsed by PC Head</label>
+        <div class="radio-group" id="endorsedGrp"></div>
+      </div>
+      <div class="row2 mb12">
+        <div><label class="field">Deployment</label><input type="text" id="deployment" placeholder="e.g. C4I Programme Centre"></div>
+        <div><label class="field">Proposed appointment / grade</label><input type="text" id="proposedAppt" placeholder="e.g. Engineer, Grade 8"></div>
+      </div>
+      <div class="mb12">
+        <label class="field">Eligible for ICT / UXD Incentive</label>
+        <div class="radio-group" id="incentiveGrp"></div>
+      </div>
+      <div>
+        <label class="field">Additional remarks</label>
+        <textarea id="outcomeRemarks" rows="3" placeholder="Any additional comments..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="section-badge">D</span> Total Relevant Experience <span class="ai-badge">AI pre-filled</span></div>
+      <div id="treContainer"></div>
+      <button class="add-btn" id="addTreBtn">+ Add employment entry</button>
+    </div>
+
+    <div class="card" style="background:#F0F7F0; border-color:#B8DFC0;">
+      <div class="section-title" style="border-color:#B8DFC0;">Export</div>
+      <div class="btn-row">
+        <button class="export-btn" id="exportBtn">&#8595; Download as Word (.docx)</button>
+        <button class="secondary" id="resetBtn">Start new assessment</button>
+      </div>
+      <div class="status" id="exportStatus"></div>
+    </div>
   </div>
 </div>
 
 <script>
 (function () {
-  var apiKeyInput = document.getElementById('apiKey');
-  var savedKey = localStorage.getItem('claude_api_key');
-  if (savedKey) apiKeyInput.value = savedKey;
-  apiKeyInput.addEventListener('input', function () {
-    localStorage.setItem('claude_api_key', apiKeyInput.value);
-  });
 
-  var transcript = document.getElementById('transcript');
-  var charCount = document.getElementById('charCount');
-  transcript.addEventListener('input', function () {
-    charCount.textContent = transcript.value.length.toLocaleString() + ' characters';
-  });
+// ?? Helpers ??????????????????????????????????????????????????????????????????
+function esc(s) {
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+function xmlEsc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+}
 
-  var ratingColors = {
-    'Outstanding': ['#1B7F3A', '#EAF3DE'],
-    'Very Good': ['#0F6E56', '#E1F5EE'],
-    'Good': ['#185FA5', '#E6F1FB'],
-    'Satisfactory': ['#854F0B', '#FAEEDA'],
-    'Unsatisfactory': ['#A32D2D', '#FCEBEB'],
-    'Not Applicable': ['#5F5E5A', '#F1EFE8'],
-    'Yes': ['#1B7F3A', '#EAF3DE'],
-    'No': ['#5F5E5A', '#F1EFE8']
-  };
-  var relColors = { 100: ['#1B7F3A', '#EAF3DE'], 50: ['#854F0B', '#FAEEDA'], 0: ['#5F5E5A', '#F1EFE8'] };
+// ?? API key ???????????????????????????????????????????????????????????????????
+var apiKeyEl = document.getElementById('apiKey');
+apiKeyEl.value = localStorage.getItem('claude_api_key') || '';
+apiKeyEl.addEventListener('input', function () { localStorage.setItem('claude_api_key', apiKeyEl.value); });
 
-  function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
+// ?? Char count ????????????????????????????????????????????????????????????????
+var transcriptEl = document.getElementById('transcript');
+transcriptEl.addEventListener('input', function () {
+  document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
+});
+
+// ?? Rating config ?????????????????????????????????????????????????????????????
+var ATTR_RATINGS = [
+  {val:'Outstanding',    cls:'sel-outstanding'},
+  {val:'Very Good',      cls:'sel-verygood'},
+  {val:'Good',           cls:'sel-good'},
+  {val:'Satisfactory',   cls:'sel-satisfactory'},
+  {val:'Unsatisfactory', cls:'sel-unsatisfactory'},
+  {val:'Not Applicable', cls:'sel-na'}
+];
+var YESNO_RATINGS = [
+  {val:'Yes', cls:'sel-yes'},
+  {val:'No',  cls:'sel-no'}
+];
+var REL_RATINGS = [
+  {val:'100', cls:'sel-100', lbl:'100% — Fully relevant'},
+  {val:'50',  cls:'sel-50',  lbl:'50% — Partially relevant'},
+  {val:'0',   cls:'sel-0',   lbl:'0% — Not relevant'}
+];
+var DECISION_OPTS = [
+  {val:'Offer',  cls:'sel-offer'},
+  {val:'KIV',    cls:'sel-kiv'},
+  {val:'Reject', cls:'sel-reject'}
+];
+var ENDORSED_OPTS = [
+  {val:'Endorsed', cls:'sel-endorsed'},
+  {val:'Pending',  cls:'sel-satisfactory'},
+  {val:'Not yet',  cls:'sel-na'}
+];
+var INCENTIVE_OPTS = [
+  {val:'Yes',            cls:'sel-yes'},
+  {val:'No',             cls:'sel-no'},
+  {val:'Not Applicable', cls:'sel-na'}
+];
+
+function ratingClassFor(val) {
+  var all = ATTR_RATINGS.concat(YESNO_RATINGS).concat(REL_RATINGS).concat(DECISION_OPTS).concat(ENDORSED_OPTS).concat(INCENTIVE_OPTS);
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].val === String(val)) return all[i].cls;
   }
+  return '';
+}
 
-  function badge(rating) {
-    var colors = ratingColors[rating] || ['#5F5E5A', '#F1EFE8'];
-    return '<span class="badge" style="color:' + colors[0] + ';background:' + colors[1] + ';">' + escapeHtml(rating) + '</span>';
-  }
-
-  function relBadge(rel) {
-    var colors = relColors[rel] !== undefined ? relColors[rel] : relColors[0];
-    return '<span class="badge" style="color:' + colors[0] + ';background:' + colors[1] + ';">' + rel + '% relevant</span>';
-  }
-
-  function renderAttributes(attrs) {
-    if (!attrs || !attrs.length) return '<p style="font-size:13px;color:#6B6A65;">Could not extract attribute assessments from transcript.</p>';
-    var html = '';
-    attrs.forEach(function (a) {
-      html += '<div class="attr-row">' +
-        '<div class="attr-name">' + escapeHtml(a.name) + '</div>' +
-        badge(a.rating) +
-        '<div class="attr-remarks">' + escapeHtml(a.remarks || 'No specific evidence noted.') + '</div>' +
-        '</div>';
-    });
-    return html;
-  }
-
-  function renderSkills(skills) {
-    if (!skills) return '';
-    var html = '';
-    Object.keys(skills).forEach(function (key) {
-      var v = skills[key];
-      html += '<div class="attr-row">' +
-        '<div class="attr-name">' + escapeHtml(key) + '</div>' +
-        badge(v.rating) +
-        '<div class="attr-remarks">' + escapeHtml(v.remarks || '') + '</div>' +
-        '</div>';
-    });
-    return html;
-  }
-
-  function renderTRE(entries) {
-    if (!entries || !entries.length) return '<p style="font-size:13px;color:#6B6A65;">No work experience detected in transcript.</p>';
-    var html = '';
-    entries.forEach(function (e) {
-      html += '<div class="tre-row">' +
-        '<div class="tre-period">' + escapeHtml(e.period) + '</div>' +
-        '<div class="tre-position">' + escapeHtml(e.position) + ' &mdash; ' + escapeHtml(e.company) + '</div>' +
-        relBadge(e.relevance) +
-        (e.rationale ? '<div class="attr-remarks" style="margin-top:4px;">' + escapeHtml(e.rationale) + '</div>' : '') +
-        '</div>';
-    });
-    return html;
-  }
-
-  var lastResult = null;
-
-  document.getElementById('generateBtn').addEventListener('click', function () {
-    var key = apiKeyInput.value.trim();
-    var text = transcript.value.trim();
-    var status = document.getElementById('status');
-    var errorMsg = document.getElementById('errorMsg');
-    var btn = document.getElementById('generateBtn');
-    var results = document.getElementById('results');
-
-    errorMsg.style.display = 'none';
-    results.style.display = 'none';
-
-    if (!key) {
-      errorMsg.textContent = 'Please enter your Claude API key above first.';
-      errorMsg.style.display = 'block';
-      return;
-    }
-    if (!text) {
-      errorMsg.textContent = 'Please paste a transcript first.';
-      errorMsg.style.display = 'block';
-      return;
-    }
-
-    var roleContext = document.getElementById('roleContext').value;
-
-    var prompt = 'You are an expert HR assessor helping populate an interview assessment form for DSTA (Defence Science and Technology Agency, Singapore). Analyse the interview transcript and return ONLY a JSON object with this exact structure, no preamble, no markdown, no explanation:\n\n' +
-      '{\n' +
-      '  "attributes": [\n' +
-      '    { "name": "Passion in Defence Engineering & Technology", "rating": "Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable", "remarks": "..." },\n' +
-      '    { "name": "Curiosity & Thirst for Learning", "rating": "...", "remarks": "..." },\n' +
-      '    { "name": "Drive to excel and lead others, while being a team player", "rating": "...", "remarks": "..." },\n' +
-      '    { "name": "A keen and innovative problem solver", "rating": "...", "remarks": "...(MANDATORY: describe specific evidence of innovative mindset)" },\n' +
-      '    { "name": "Flexibility to adapt, and resilient in the face of adversity", "rating": "...", "remarks": "..." }\n' +
-      '  ],\n' +
-      '  "skills": {\n' +
-      '    "Knowledge": { "rating": "Outstanding|Very Good|Good|Satisfactory|Unsatisfactory", "remarks": "..." },\n' +
-      '    "Skillsets": { "rating": "...", "remarks": "..." },\n' +
-      '    "Educational Background": { "rating": "Yes|No", "remarks": "..." },\n' +
-      '    "Certifications": { "rating": "Yes|No", "remarks": "..." }\n' +
-      '  },\n' +
-      '  "justification": "Comprehensive paragraph summarising key strengths, experience, attributes relevant to the role, and overall hiring recommendation with reasoning.",\n' +
-      '  "tre": [\n' +
-      '    { "period": "MMM YY - MMM YY", "position": "Job Title", "company": "Company Name", "relevance": 100, "rationale": "Why this experience is fully, partially, or not relevant to the role" }\n' +
-      '  ],\n' +
-      '  "evidenceNote": "Brief note on whether the source material was a verbatim transcript or a summary, and how that affects confidence in these ratings."\n' +
-      '}\n\n' +
-      'Rating scale order: Outstanding > Very Good > Good > Satisfactory > Unsatisfactory. Only use Not Applicable for attributes with truly no basis to assess.\n' +
-      'Rules:\n' +
-      '- If evidence is insufficient, use Satisfactory and note "Insufficient evidence - interviewer to verify" in remarks.\n' +
-      '- "A keen and innovative problem solver" is MANDATORY, always rate it.\n' +
-      '- TRE relevance must be 100, 50, or 0 only.\n' +
-      '- If source material looks like a summary rather than verbatim transcript, be conservative and flag this in evidenceNote.\n' +
-      '- Role context: ' + (roleContext || 'not specified, use best judgment') + '.\n\n' +
-      'Transcript:\n' + text;
-
-    btn.disabled = true;
-    btn.textContent = 'Analysing...';
-    status.textContent = 'Sending to AI...';
-
-    fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    })
-      .then(function (response) {
-        if (!response.ok) {
-          return response.text().then(function (t) {
-            throw new Error('API error ' + response.status + ': ' + t.slice(0, 200));
-          });
-        }
-        return response.json();
-      })
-      .then(function (data) {
-        status.textContent = 'Parsing response...';
-        var raw = '';
-        data.content.forEach(function (block) {
-          if (block.type === 'text') raw += block.text;
-        });
-        var clean = raw.replace(/```json|```/g, '').trim();
-        var parsed = JSON.parse(clean);
-        lastResult = parsed;
-
-        document.getElementById('attributesOutput').innerHTML = renderAttributes(parsed.attributes);
-        document.getElementById('skillsOutput').innerHTML = renderSkills(parsed.skills);
-        document.getElementById('justificationOutput').textContent = parsed.justification || '';
-        document.getElementById('treOutput').innerHTML = renderTRE(parsed.tre);
-
-        var noteBox = document.getElementById('evidenceNoteBox');
-        if (parsed.evidenceNote) {
-          noteBox.textContent = parsed.evidenceNote;
-          noteBox.style.display = 'block';
-        } else {
-          noteBox.style.display = 'none';
-        }
-
-        results.style.display = 'block';
-        status.textContent = 'Done. Review and adjust before submitting.';
-      })
-      .catch(function (err) {
-        errorMsg.textContent = 'Something went wrong: ' + err.message;
-        errorMsg.style.display = 'block';
-        status.textContent = '';
-      })
-      .finally(function () {
-        btn.disabled = false;
-        btn.textContent = 'Generate assessment';
+// ?? Build a radio button group ????????????????????????????????????????????????
+function buildRadioGroup(containerId, options, selectedVal) {
+  var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+  container.innerHTML = '';
+  options.forEach(function (opt) {
+    var val   = typeof opt === 'object' ? opt.val  : opt;
+    var label = typeof opt === 'object' ? (opt.lbl || opt.val) : opt;
+    var cls   = typeof opt === 'object' ? opt.cls  : '';
+    var btn   = document.createElement('span');
+    btn.className = 'radio-opt' + (String(val) === String(selectedVal) ? ' ' + cls : '');
+    btn.setAttribute('data-val', val);
+    btn.setAttribute('data-cls', cls);
+    btn.textContent = label;
+    btn.addEventListener('click', function () {
+      container.querySelectorAll('.radio-opt').forEach(function (b) {
+        b.className = 'radio-opt';
       });
+      btn.className = 'radio-opt ' + cls;
+    });
+    container.appendChild(btn);
   });
+}
 
-  document.getElementById('clearBtn').addEventListener('click', function () {
-    transcript.value = '';
-    charCount.textContent = '0 characters';
-    document.getElementById('candidateName').value = '';
-    document.getElementById('interviewedBy').value = '';
-    document.getElementById('interviewDate').value = '';
-    document.getElementById('roleContext').value = '';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('status').textContent = '';
-    document.getElementById('errorMsg').style.display = 'none';
-    lastResult = null;
+function getRadioVal(container) {
+  var sel = container.querySelector('.radio-opt[class*="sel-"]');
+  return sel ? sel.getAttribute('data-val') : '';
+}
+
+// ?? Section C static groups ???????????????????????????????????????????????????
+buildRadioGroup('decisionGrp',  DECISION_OPTS,  '');
+buildRadioGroup('endorsedGrp',  ENDORSED_OPTS,  '');
+buildRadioGroup('incentiveGrp', INCENTIVE_OPTS, '');
+
+// ?? Render attribute block ????????????????????????????????????????????????????
+function renderAttrBlock(container, name, ratingOptions, selectedRating, remarks) {
+  var div = document.createElement('div');
+  div.className = 'attr-block';
+  var nameDiv = document.createElement('div');
+  nameDiv.className = 'attr-name';
+  nameDiv.textContent = name;
+  div.appendChild(nameDiv);
+
+  var radioDiv = document.createElement('div');
+  radioDiv.className = 'radio-group';
+  buildRadioGroup(radioDiv, ratingOptions, selectedRating);
+  div.appendChild(radioDiv);
+
+  var rl = document.createElement('div');
+  rl.className = 'remarks-label';
+  rl.textContent = 'Remarks';
+  div.appendChild(rl);
+
+  var ta = document.createElement('textarea');
+  ta.className = 'attr-remarks';
+  ta.rows = 3;
+  ta.placeholder = 'Enter remarks...';
+  ta.value = remarks || '';
+  div.appendChild(ta);
+
+  container.appendChild(div);
+}
+
+// ?? Render attributes ?????????????????????????????????????????????????????????
+function renderAttributes(attrs) {
+  var c = document.getElementById('attrsContainer');
+  c.innerHTML = '';
+  attrs.forEach(function (a) {
+    renderAttrBlock(c, a.name, ATTR_RATINGS, a.rating, a.remarks);
   });
+}
 
-  document.getElementById('copyBtn').addEventListener('click', function () {
-    if (!lastResult) return;
-    var name = document.getElementById('candidateName').value;
-    var by = document.getElementById('interviewedBy').value;
-    var date = document.getElementById('interviewDate').value;
+// ?? Render skills ?????????????????????????????????????????????????????????????
+var YESNO_KEYS = ['Educational Background', 'Certifications'];
+function renderSkills(skills) {
+  var c = document.getElementById('skillsContainer');
+  c.innerHTML = '';
+  Object.keys(skills).forEach(function (key) {
+    var v = skills[key];
+    var opts = YESNO_KEYS.indexOf(key) !== -1 ? YESNO_RATINGS : ATTR_RATINGS;
+    renderAttrBlock(c, key, opts, v.rating, v.remarks);
+  });
+}
 
-    var attrsText = lastResult.attributes.map(function (a) {
-      return a.name + '\nRating: ' + a.rating + '\nRemarks: ' + a.remarks;
-    }).join('\n\n');
+// ?? Render TRE entry ??????????????????????????????????????????????????????????
+function renderTREEntry(e) {
+  var container = document.getElementById('treContainer');
+  var div = document.createElement('div');
+  div.className = 'tre-entry';
 
-    var skillsText = Object.keys(lastResult.skills).map(function (k) {
-      var v = lastResult.skills[k];
-      return k + ': ' + v.rating + ' - ' + v.remarks;
-    }).join('\n');
+  var removeBtn = document.createElement('button');
+  removeBtn.className = 'tre-remove';
+  removeBtn.textContent = '?';
+  removeBtn.title = 'Remove';
+  removeBtn.addEventListener('click', function () { container.removeChild(div); });
+  div.appendChild(removeBtn);
 
-    var treText = lastResult.tre.map(function (e) {
-      return e.period + ' | ' + e.position + ' - ' + e.company + ' | ' + e.relevance + '% relevant | ' + e.rationale;
-    }).join('\n');
+  var row = document.createElement('div');
+  row.className = 'row3';
+  row.style.marginBottom = '10px';
+  ['Period','Position','Company / Organisation'].forEach(function (lbl, i) {
+    var vals = [e.period, e.position, e.company];
+    var classes = ['tre-period','tre-position','tre-company'];
+    var placeholders = ['e.g. Jan 20 - Dec 22','Job title','Company name'];
+    var cell = document.createElement('div');
+    cell.innerHTML = '<label class="field">' + esc(lbl) + '</label>' +
+      '<input type="text" class="' + classes[i] + '" placeholder="' + esc(placeholders[i]) + '" value="' + esc(vals[i] || '') + '">';
+    row.appendChild(cell);
+  });
+  div.appendChild(row);
 
-    var text = 'INTERVIEW ASSESSMENT FORM\n' +
-      '=========================\n' +
-      'Candidate: ' + name + '\n' +
-      'Interviewed by: ' + by + '\n' +
-      'Date: ' + date + '\n\n' +
-      '[A] ATTRIBUTES\n' + attrsText + '\n\n' +
-      '[B] SKILLS & KNOWLEDGE\n' + skillsText + '\n\n' +
-      '[B] JUSTIFICATION\n' + lastResult.justification + '\n\n' +
-      '[D] TOTAL RELEVANT EXPERIENCE\n' + treText + '\n\n' +
-      '[C] INTERVIEW OUTCOME - TO BE COMPLETED BY INTERVIEWER\n' +
-      'Decision:\nEndorsed by PC Head:\nDeployment:\nProposed Appointment:\nEligible for ICT/UXD Incentive:\n\n' +
-      'Note on evidence quality: ' + (lastResult.evidenceNote || 'N/A');
+  var relLabel = document.createElement('div');
+  relLabel.className = 'mb12';
+  relLabel.innerHTML = '<label class="field">Relevance to role</label>';
+  var relGroup = document.createElement('div');
+  relGroup.className = 'radio-group tre-rel';
+  buildRadioGroup(relGroup, REL_RATINGS, String(e.relevance));
+  relLabel.appendChild(relGroup);
+  div.appendChild(relLabel);
 
-    navigator.clipboard.writeText(text).then(function () {
-      document.getElementById('status').textContent = 'Copied to clipboard.';
+  var rationale = document.createElement('div');
+  rationale.innerHTML = '<label class="field">Rationale</label><textarea class="tre-rationale" rows="2" placeholder="Why is this experience relevant or not?">' + esc(e.rationale || '') + '</textarea>';
+  div.appendChild(rationale);
+
+  container.appendChild(div);
+}
+
+document.getElementById('addTreBtn').addEventListener('click', function () { renderTREEntry({}); });
+
+// ?? Generate ??????????????????????????????????????????????????????????????????
+document.getElementById('generateBtn').addEventListener('click', function () {
+  var key  = apiKeyEl.value.trim();
+  var text = transcriptEl.value.trim();
+  var statusEl = document.getElementById('status');
+  var errorEl  = document.getElementById('errorMsg');
+  var btn      = document.getElementById('generateBtn');
+
+  errorEl.style.display = 'none';
+  if (!key)  { errorEl.textContent = 'Please enter your Claude API key.'; errorEl.style.display = 'block'; return; }
+  if (!text) { errorEl.textContent = 'Please paste a transcript.';        errorEl.style.display = 'block'; return; }
+
+  var role = document.getElementById('roleApplied').value;
+  var prompt =
+    'You are an expert HR assessor for DSTA (Defence Science and Technology Agency, Singapore).\n' +
+    'Analyse the interview transcript and return ONLY a valid JSON object — no preamble, no markdown.\n\n' +
+    'Required structure:\n' +
+    '{\n' +
+    '  "attributes": [\n' +
+    '    {"name":"Passion in Defence Engineering & Technology","rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable","remarks":"..."},\n' +
+    '    {"name":"Curiosity & Thirst for Learning","rating":"...","remarks":"..."},\n' +
+    '    {"name":"Drive to excel and lead others, while being a team player","rating":"...","remarks":"..."},\n' +
+    '    {"name":"A keen and innovative problem solver","rating":"...","remarks":"... (MANDATORY)"},\n' +
+    '    {"name":"Flexibility to adapt, and resilient in the face of adversity","rating":"...","remarks":"..."}\n' +
+    '  ],\n' +
+    '  "skills":{\n' +
+    '    "Knowledge":{"rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory","remarks":"..."},\n' +
+    '    "Skillsets":{"rating":"...","remarks":"..."},\n' +
+    '    "Educational Background":{"rating":"Yes|No","remarks":"..."},\n' +
+    '    "Certifications":{"rating":"Yes|No","remarks":"..."}\n' +
+    '  },\n' +
+    '  "justification":"Comprehensive paragraph on strengths, suitability, and hiring recommendation.",\n' +
+    '  "tre":[{"period":"MMM YY - MMM YY","position":"Job Title","company":"Company","relevance":100,"rationale":"..."}],\n' +
+    '  "evidenceNote":"Note on whether source was verbatim or summary and confidence level."\n' +
+    '}\n\n' +
+    'Rules:\n' +
+    '- Insufficient evidence -> Satisfactory + "Insufficient evidence - interviewer to verify".\n' +
+    '- "A keen and innovative problem solver" is MANDATORY.\n' +
+    '- TRE relevance: 100, 50, or 0 only.\n' +
+    '- Role context: ' + (role || 'not specified') + '.\n\n' +
+    'Transcript:\n' + text;
+
+  btn.disabled = true;
+  btn.textContent = 'Analysing...';
+  statusEl.textContent = 'Sending to AI...';
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  })
+  .then(function (r) {
+    if (!r.ok) return r.text().then(function (t) { throw new Error('API ' + r.status + ': ' + t.slice(0,200)); });
+    return r.json();
+  })
+  .then(function (data) {
+    statusEl.textContent = 'Parsing...';
+    var raw   = data.content.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('');
+    var clean = raw.replace(/```json|```/g,'').trim();
+    var p     = JSON.parse(clean);
+
+    renderAttributes(p.attributes || []);
+    renderSkills(p.skills || {});
+    document.getElementById('justification').value = p.justification || '';
+    document.getElementById('treContainer').innerHTML = '';
+    (p.tre || []).forEach(function (e) { renderTREEntry(e); });
+
+    var nb = document.getElementById('evidenceNoteBox');
+    if (p.evidenceNote) { nb.textContent = p.evidenceNote; nb.style.display = 'block'; }
+    else                { nb.style.display = 'none'; }
+
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+    statusEl.textContent = 'Form pre-filled. Review and edit, then download.';
+  })
+  .catch(function (err) {
+    errorEl.textContent = 'Error: ' + err.message;
+    errorEl.style.display = 'block';
+    statusEl.textContent = '';
+  })
+  .finally(function () {
+    btn.disabled = false;
+    btn.textContent = 'Generate assessment';
+  });
+});
+
+// ?? Clear / Reset ?????????????????????????????????????????????????????????????
+document.getElementById('clearBtn').addEventListener('click', function () {
+  transcriptEl.value = '';
+  document.getElementById('charCount').textContent = '0 characters';
+});
+
+document.getElementById('resetBtn').addEventListener('click', function () {
+  if (!confirm('Start new assessment? Current data will be cleared.')) return;
+  ['candidateName','interviewedBy','roleApplied','programmeCentre','deployment','proposedAppt','outcomeRemarks','justification'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('interviewDate').value = '';
+  transcriptEl.value = '';
+  document.getElementById('charCount').textContent = '0 characters';
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('status').textContent = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ?? Collect form data ?????????????????????????????????????????????????????????
+function collectForm() {
+  var attrs = [];
+  document.getElementById('attrsContainer').querySelectorAll('.attr-block').forEach(function (b) {
+    attrs.push({
+      name:    b.querySelector('.attr-name').textContent,
+      rating:  getRadioVal(b.querySelector('.radio-group')),
+      remarks: b.querySelector('.attr-remarks').value
     });
   });
+
+  var skills = [];
+  document.getElementById('skillsContainer').querySelectorAll('.attr-block').forEach(function (b) {
+    skills.push({
+      name:    b.querySelector('.attr-name').textContent,
+      rating:  getRadioVal(b.querySelector('.radio-group')),
+      remarks: b.querySelector('.attr-remarks').value
+    });
+  });
+
+  var tre = [];
+  document.getElementById('treContainer').querySelectorAll('.tre-entry').forEach(function (e) {
+    tre.push({
+      period:    e.querySelector('.tre-period').value,
+      position:  e.querySelector('.tre-position').value,
+      company:   e.querySelector('.tre-company').value,
+      relevance: getRadioVal(e.querySelector('.tre-rel')),
+      rationale: e.querySelector('.tre-rationale').value
+    });
+  });
+
+  return {
+    candidateName:   document.getElementById('candidateName').value,
+    interviewedBy:   document.getElementById('interviewedBy').value,
+    interviewDate:   document.getElementById('interviewDate').value,
+    roleApplied:     document.getElementById('roleApplied').value,
+    programmeCentre: document.getElementById('programmeCentre').value,
+    attributes:      attrs,
+    skills:          skills,
+    justification:   document.getElementById('justification').value,
+    decision:        getRadioVal(document.getElementById('decisionGrp')),
+    endorsed:        getRadioVal(document.getElementById('endorsedGrp')),
+    deployment:      document.getElementById('deployment').value,
+    proposedAppt:    document.getElementById('proposedAppt').value,
+    incentive:       getRadioVal(document.getElementById('incentiveGrp')),
+    outcomeRemarks:  document.getElementById('outcomeRemarks').value,
+    tre:             tre
+  };
+}
+
+// ?? DOCX export ???????????????????????????????????????????????????????????????
+document.getElementById('exportBtn').addEventListener('click', function () {
+  var d = collectForm();
+  var statusEl = document.getElementById('exportStatus');
+  statusEl.textContent = 'Generating Word document...';
+  try {
+    var zip = new PizZip();
+    zip.file('[Content_Types].xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml"  ContentType="application/xml"/>' +
+      '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+      '<Override PartName="/word/styles.xml"   ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+      '</Types>');
+    zip.file('_rels/.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+      '</Relationships>');
+    zip.file('word/_rels/document.xml.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      '</Relationships>');
+    zip.file('word/styles.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+      '<w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/>' +
+      '<w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>' +
+      '</w:styles>');
+    zip.file('word/document.xml', buildDocXml(d));
+
+    var blob = zip.generate({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    var fname = 'Interview_Assessment_' + (d.candidateName || 'Candidate').replace(/\s+/g,'_') + '_' + (d.interviewDate || 'Date') + '.docx';
+    saveAs(blob, fname);
+    statusEl.textContent = 'Downloaded: ' + fname;
+  } catch(e) {
+    statusEl.textContent = 'Export failed: ' + e.message;
+  }
+});
+
+function p(text, bold, size, color) {
+  var rPr = '';
+  if (bold)  rPr += '<w:b/><w:bCs/>';
+  if (size)  rPr += '<w:sz w:val="' + size + '"/><w:szCs w:val="' + size + '"/>';
+  if (color) rPr += '<w:color w:val="' + color + '"/>';
+  return '<w:p><w:pPr><w:spacing w:after="80"/></w:pPr>' +
+    '<w:r>' + (rPr ? '<w:rPr>' + rPr + '</w:rPr>' : '') +
+    '<w:t xml:space="preserve">' + xmlEsc(text) + '</w:t></w:r></w:p>';
+}
+
+function secHeader(letter, title) {
+  return '<w:p><w:pPr><w:spacing w:before="240" w:after="120"/>' +
+    '<w:shd w:val="clear" w:color="auto" w:fill="185FA5"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="24"/><w:color w:val="FFFFFF"/></w:rPr>' +
+    '<w:t xml:space="preserve"> [' + xmlEsc(letter) + '] ' + xmlEsc(title) + ' </w:t></w:r></w:p>';
+}
+
+function lv(label, value) {
+  return '<w:p><w:pPr><w:spacing w:after="60"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(label) + ': </w:t></w:r>' +
+    '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(value || '—') + '</w:t></w:r></w:p>';
+}
+
+function attrBlock(a) {
+  return '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/>' +
+    '<w:shd w:val="clear" w:color="auto" w:fill="EEF4FF"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr>' +
+    '<w:t xml:space="preserve">' + xmlEsc(a.name) + '</w:t></w:r></w:p>' +
+    lv('Rating', a.rating) +
+    lv('Remarks', a.remarks);
+}
+
+function treBlock(e) {
+  return '<w:p><w:pPr><w:spacing w:before="100" w:after="40"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr>' +
+    '<w:t xml:space="preserve">' + xmlEsc(e.position) + ' — ' + xmlEsc(e.company) + '</w:t></w:r></w:p>' +
+    lv('Period', e.period) +
+    lv('Relevance', e.relevance + '%') +
+    lv('Rationale', e.rationale);
+}
+
+function buildDocXml(d) {
+  var body = '';
+  // Title
+  body += '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="60"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="185FA5"/></w:rPr>' +
+    '<w:t>DSTA Interview Assessment Form</w:t></w:r></w:p>';
+  // Header
+  body += lv('Candidate', d.candidateName);
+  body += lv('Interviewed by', d.interviewedBy);
+  body += lv('Date', d.interviewDate);
+  body += lv('Role applied for', d.roleApplied);
+  body += lv('Programme Centre', d.programmeCentre);
+  // A
+  body += secHeader('A', 'Attributes');
+  d.attributes.forEach(function (a) { body += attrBlock(a); });
+  // B
+  body += secHeader('B', 'Skills, Knowledge & Education');
+  d.skills.forEach(function (s) { body += attrBlock(s); });
+  body += '<w:p><w:pPr><w:spacing w:before="120" w:after="40"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t>Justification / Hiring recommendation</w:t></w:r></w:p>';
+  body += '<w:p><w:pPr><w:spacing w:after="120"/></w:pPr>' +
+    '<w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t xml:space="preserve">' + xmlEsc(d.justification) + '</w:t></w:r></w:p>';
+  // C
+  body += secHeader('C', 'Interview Outcome');
+  body += lv('Decision', d.decision);
+  body += lv('Endorsed by PC Head', d.endorsed);
+  body += lv('Deployment', d.deployment);
+  body += lv('Proposed appointment / grade', d.proposedAppt);
+  body += lv('Eligible for ICT / UXD Incentive', d.incentive);
+  body += lv('Additional remarks', d.outcomeRemarks);
+  // D
+  body += secHeader('D', 'Total Relevant Experience');
+  d.tre.forEach(function (e) { body += treBlock(e); });
+
+  var NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ' +
+           'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document ' + NS + '><w:body>' +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
+    '<w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/>' +
+    '</w:sectPr>' + body + '</w:body></w:document>';
+}
+
 })();
 </script>
 </body>
