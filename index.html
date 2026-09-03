@@ -138,11 +138,15 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
       </div>
       <div class="row2 mb12">
         <div><label class="field">Deployment</label><input type="text" id="deployment" placeholder="e.g. C4I Programme Centre"></div>
-        <div><label class="field">Proposed appointment / grade</label><input type="text" id="proposedAppt" placeholder="e.g. Engineer, Grade 8"></div>
+        <div><label class="field">Proposed appointment</label><input type="text" id="proposedAppt" placeholder="e.g. Engineer, Grade 8"></div>
       </div>
       <div class="mb12">
-        <label class="field">Eligible for ICT / UXD Incentive</label>
-        <div class="radio-group" id="incentiveGrp"></div>
+        <label class="field">Eligible for ICT Incentive</label>
+        <div class="radio-group" id="ictGrp"></div>
+      </div>
+      <div class="mb12">
+        <label class="field">Eligible for UXD Incentive</label>
+        <div class="radio-group" id="uxdGrp"></div>
       </div>
       <div>
         <label class="field">Additional remarks</label>
@@ -189,8 +193,10 @@ var ATTR_RATINGS   = [{val:'Outstanding',cls:'sel-outstanding'},{val:'Very Good'
 var YESNO_RATINGS  = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'}];
 var REL_RATINGS    = [{val:'100',cls:'sel-100',lbl:'100% — Fully relevant'},{val:'50',cls:'sel-50',lbl:'50% — Partially relevant'},{val:'0',cls:'sel-0',lbl:'0% — Not relevant'}];
 var DECISION_OPTS  = [{val:'Offer',cls:'sel-offer'},{val:'KIV',cls:'sel-kiv'},{val:'Reject',cls:'sel-reject'}];
-var ENDORSED_OPTS  = [{val:'Endorsed',cls:'sel-endorsed'},{val:'Pending',cls:'sel-satisfactory'},{val:'Not yet',cls:'sel-na'}];
+var ENDORSED_OPTS  = [{val:'Endorsed',cls:'sel-endorsed'},{val:'Pending',cls:'sel-satisfactory'}];
 var INCENTIVE_OPTS = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'},{val:'Not Applicable',cls:'sel-na'}];
+var ICT_OPTS = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'},{val:'Not Applicable',cls:'sel-na'}];
+var UXD_OPTS = [{val:'Yes',cls:'sel-yes'},{val:'No',cls:'sel-no'},{val:'Not Applicable',cls:'sel-na'}];
 
 var apiKeyEl = document.getElementById('apiKey');
 apiKeyEl.value = localStorage.getItem('claude_api_key') || '';
@@ -225,7 +231,8 @@ function getRadioVal(container) {
 
 buildRadioGroup(document.getElementById('decisionGrp'),  DECISION_OPTS,  '');
 buildRadioGroup(document.getElementById('endorsedGrp'),  ENDORSED_OPTS,  '');
-buildRadioGroup(document.getElementById('incentiveGrp'), INCENTIVE_OPTS, '');
+buildRadioGroup(document.getElementById('ictGrp'), ICT_OPTS, '');
+buildRadioGroup(document.getElementById('uxdGrp'), UXD_OPTS, '');
 
 function renderBlock(container, name, descriptor, mandatory, ratingOptions, selectedRating, remarks) {
   var div = document.createElement('div');
@@ -359,7 +366,7 @@ document.getElementById('resetBtn').addEventListener('click', function () {
   transcriptEl.value = ''; document.getElementById('charCount').textContent = '0 characters';
   renderAttributes([]); renderSkills({});
   document.getElementById('treContainer').innerHTML = ''; renderTREEntry();
-  ['decisionGrp','endorsedGrp','incentiveGrp'].forEach(function (id) { document.getElementById(id).querySelectorAll('.radio-opt').forEach(function (b) { b.className = 'radio-opt'; }); });
+  ['decisionGrp','endorsedGrp','ictGrp','uxdGrp'].forEach(function (id) { document.getElementById(id).querySelectorAll('.radio-opt').forEach(function (b) { b.className = 'radio-opt'; }); });
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('status').textContent = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -385,7 +392,7 @@ function collectForm() {
     midCareer: document.getElementById('midCareer').value, justification: document.getElementById('justification').value,
     decision: getRadioVal(document.getElementById('decisionGrp')), endorsed: getRadioVal(document.getElementById('endorsedGrp')),
     deployment: document.getElementById('deployment').value, proposedAppt: document.getElementById('proposedAppt').value,
-    incentive: getRadioVal(document.getElementById('incentiveGrp')), outcomeRemarks: document.getElementById('outcomeRemarks').value, tre: tre
+    ictIncentive: getRadioVal(document.getElementById('ictGrp')), uxdIncentive: getRadioVal(document.getElementById('uxdGrp')), outcomeRemarks: document.getElementById('outcomeRemarks').value, tre: tre
   };
 }
 
@@ -510,8 +517,9 @@ document.getElementById('exportBtn').addEventListener('click', function () {
   children.push(labelVal('Decision', d.decision));
   children.push(labelVal('Endorsed by PC Head', d.endorsed));
   children.push(labelVal('Deployment', d.deployment));
-  children.push(labelVal('Proposed appointment / grade', d.proposedAppt));
-  children.push(labelVal('Eligible for ICT / UXD Incentive', d.incentive));
+  children.push(labelVal('Proposed appointment', d.proposedAppt));
+  children.push(labelVal('Eligible for ICT Incentive', d.ictIncentive));
+  children.push(labelVal('Eligible for UXD Incentive', d.uxdIncentive));
   children.push(labelVal('Additional remarks', d.outcomeRemarks));
 
   // Section D
