@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DSTA Interview Assessment Form</title>
 <script src="docx.iife.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F5; color: #1A1A1A; font-size: 14px; }
@@ -65,6 +66,13 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
 .hint { font-size: 11px; color: #8A7340; margin-top: 6px; }
 .charcount { font-size: 11px; color: #9A9890; text-align: right; margin-top: 4px; }
 .divider { border: none; border-top: 1px solid #E5E3DA; margin: 16px 0; }
+.upload-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.upload-btn { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid #D8D6CE; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; color: #185FA5; cursor: pointer; font-family: inherit; }
+.upload-btn:hover { border-color: #185FA5; background: #F0F7FF; }
+.upload-hint { font-size: 12px; color: #9A9890; }
+.upload-status { font-size: 12px; margin-bottom: 8px; min-height: 16px; }
+.upload-status.ok { color: #1B7F3A; }
+.upload-status.err { color: #A32D2D; }
 #formSection { display: none; }
 </style>
 </head>
@@ -94,11 +102,19 @@ button.export-btn { background: #1B7F3A; color: #fff; border: none; border-radiu
 
   <div class="card">
     <div class="section-title">Transcript Input</div>
+    <div class="upload-row">
+      <label class="upload-btn" for="fileUpload">
+        <span id="uploadLabel">&#8593; Upload transcript (.txt or .docx)</span>
+        <input type="file" id="fileUpload" accept=".txt,.docx" style="display:none;">
+      </label>
+      <span class="upload-hint">or paste below</span>
+    </div>
+    <div class="upload-status" id="uploadStatus"></div>
     <textarea id="transcript" rows="8" placeholder="Paste the full interview transcript or summary here, then click Generate Assessment..."></textarea>
     <div class="charcount" id="charCount">0 characters</div>
     <div class="btn-row">
       <button class="primary" id="generateBtn">Generate assessment</button>
-      <button class="secondary" id="clearBtn">Clear transcript</button>
+      <button class="secondary" id="clearBtn">Clear</button>
     </div>
     <div class="status" id="status"></div>
     <div class="error-msg" id="errorMsg"></div>
@@ -205,6 +221,68 @@ apiKeyEl.addEventListener('input', function () { localStorage.setItem('claude_ap
 var transcriptEl = document.getElementById('transcript');
 transcriptEl.addEventListener('input', function () {
   document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
+});
+
+// ── File upload handler ───────────────────────────────────────────────────────
+document.getElementById('fileUpload').addEventListener('change', function (e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var uploadStatus = document.getElementById('uploadStatus');
+  var uploadLabel  = document.getElementById('uploadLabel');
+  uploadStatus.className = 'upload-status';
+  uploadStatus.textContent = 'Reading file...';
+
+  var ext = file.name.split('.').pop().toLowerCase();
+
+  if (ext === 'txt') {
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      transcriptEl.value = ev.target.result;
+      document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
+      uploadStatus.className = 'upload-status ok';
+      uploadStatus.textContent = '✓ Loaded: ' + file.name;
+      uploadLabel.textContent = '✓ ' + file.name;
+    };
+    reader.onerror = function () {
+      uploadStatus.className = 'upload-status err';
+      uploadStatus.textContent = 'Could not read file.';
+    };
+    reader.readAsText(file);
+
+  } else if (ext === 'docx') {
+    if (typeof mammoth === 'undefined') {
+      uploadStatus.className = 'upload-status err';
+      uploadStatus.textContent = 'mammoth library not loaded — check your internet connection and reload.';
+      return;
+    }
+    var reader2 = new FileReader();
+    reader2.onload = function (ev) {
+      mammoth.extractRawText({ arrayBuffer: ev.target.result })
+        .then(function (result) {
+          transcriptEl.value = result.value;
+          document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
+          uploadStatus.className = 'upload-status ok';
+          uploadStatus.textContent = '✓ Loaded: ' + file.name;
+          uploadLabel.textContent = '✓ ' + file.name;
+        })
+        .catch(function (err) {
+          uploadStatus.className = 'upload-status err';
+          uploadStatus.textContent = 'Could not extract text from .docx: ' + err.message;
+        });
+    };
+    reader2.onerror = function () {
+      uploadStatus.className = 'upload-status err';
+      uploadStatus.textContent = 'Could not read file.';
+    };
+    reader2.readAsArrayBuffer(file);
+
+  } else {
+    uploadStatus.className = 'upload-status err';
+    uploadStatus.textContent = 'Please upload a .txt or .docx file.';
+  }
+
+  // Reset input so same file can be re-uploaded if needed
+  e.target.value = '';
 });
 
 function buildRadioGroup(container, options, selectedVal) {
@@ -356,7 +434,11 @@ document.getElementById('generateBtn').addEventListener('click', function () {
 });
 
 document.getElementById('clearBtn').addEventListener('click', function () {
-  transcriptEl.value = ''; document.getElementById('charCount').textContent = '0 characters';
+  transcriptEl.value = '';
+  document.getElementById('charCount').textContent = '0 characters';
+  document.getElementById('uploadStatus').textContent = '';
+  document.getElementById('uploadStatus').className = 'upload-status';
+  document.getElementById('uploadLabel').textContent = '↑ Upload transcript (.txt or .docx)';
 });
 
 document.getElementById('resetBtn').addEventListener('click', function () {
@@ -471,8 +553,8 @@ document.getElementById('exportBtn').addEventListener('click', function () {
     var rl = e.relevance==='100'?'100% Relevant':e.relevance==='50'?'50% Relevant':e.relevance==='0'?'0% Relevant':(e.relevance||'—');
     return [new Table({ width:{size:100,type:WidthType.PERCENTAGE}, borders:noBorders(), rows:[new TableRow({children:[
       makeCell(e.period||'—',{size:9,color:'6B6A65',width:1800},'F7F7F5'),
-      makeCell((e.position||'—')+'
-'+(e.company||''),{bold:true,size:9,width:3200},'FFFFFF'),
+      makeCell((e.position||'—')+' | '+(e.company||''),{bold:true,size:9,width:3200},'FFFFFF'),
+
       makeCell(rl,{bold:true,size:9,color:rs[0],align:AlignmentType.CENTER,width:1600},rs[1]),
       makeCell(e.rationale||'—',{size:9,color:'6B6A65',width:3000},'FFFFFF')
     ]})] }), spacer(40)];
