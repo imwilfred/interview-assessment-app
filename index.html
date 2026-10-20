@@ -223,7 +223,7 @@ transcriptEl.addEventListener('input', function () {
   document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
 });
 
-// ── File upload handler ───────────────────────────────────────────────────────
+// ?? File upload handler ???????????????????????????????????????????????????????
 document.getElementById('fileUpload').addEventListener('change', function (e) {
   var file = e.target.files[0];
   if (!file) return;
@@ -240,8 +240,8 @@ document.getElementById('fileUpload').addEventListener('change', function (e) {
       transcriptEl.value = ev.target.result;
       document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
       uploadStatus.className = 'upload-status ok';
-      uploadStatus.textContent = '✓ Loaded: ' + file.name;
-      uploadLabel.textContent = '✓ ' + file.name;
+      uploadStatus.textContent = '? Loaded: ' + file.name;
+      uploadLabel.textContent = '? ' + file.name;
     };
     reader.onerror = function () {
       uploadStatus.className = 'upload-status err';
@@ -262,8 +262,8 @@ document.getElementById('fileUpload').addEventListener('change', function (e) {
           transcriptEl.value = result.value;
           document.getElementById('charCount').textContent = transcriptEl.value.length.toLocaleString() + ' characters';
           uploadStatus.className = 'upload-status ok';
-          uploadStatus.textContent = '✓ Loaded: ' + file.name;
-          uploadLabel.textContent = '✓ ' + file.name;
+          uploadStatus.textContent = '? Loaded: ' + file.name;
+          uploadLabel.textContent = '? ' + file.name;
         })
         .catch(function (err) {
           uploadStatus.className = 'upload-status err';
@@ -370,7 +370,7 @@ function renderSkills(aiData) {
 function renderTREEntry() {
   var container = document.getElementById('treContainer');
   var div = document.createElement('div'); div.className = 'tre-entry';
-  var rm = document.createElement('button'); rm.className = 'tre-remove'; rm.textContent = '✕';
+  var rm = document.createElement('button'); rm.className = 'tre-remove'; rm.textContent = '?';
   rm.addEventListener('click', function () { container.removeChild(div); });
   div.appendChild(rm);
   var row = document.createElement('div'); row.className = 'row3'; row.style.marginBottom = '10px';
@@ -404,7 +404,7 @@ document.getElementById('generateBtn').addEventListener('click', function () {
   if (!key) { errorEl.textContent = 'Please enter your Claude API key.'; errorEl.style.display = 'block'; return; }
   if (!text) { errorEl.textContent = 'Please paste a transcript.'; errorEl.style.display = 'block'; return; }
   var role = document.getElementById('roleApplied').value;
-  var prompt = 'You are an expert HR assessor for DSTA (Defence Science and Technology Agency, Singapore).\nAnalyse the interview transcript using the descriptors below and return ONLY valid JSON, no preamble, no markdown.\n\nJSON structure:\n{"attributes":[{"name":"Passion in Defence Engineering & Technology","rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable","remarks":"..."},{"name":"Curiosity & Thirst for Learning","rating":"...","remarks":"..."},{"name":"Drive to excel and lead others, while being a team player","rating":"...","remarks":"..."},{"name":"A keen and innovative problem solver","rating":"...","remarks":"... MANDATORY with specific evidence"},{"name":"Flexibility to adapt, and resilient in the face of adversity","rating":"...","remarks":"..."}],"skills":{"Knowledge":{"rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory","remarks":"..."},"Skillsets":{"rating":"...","remarks":"..."},"Educational Background":{"rating":"Yes|No","remarks":"..."},"Certification":{"rating":"Yes|No","remarks":"..."}},"justification":"Comprehensive paragraph on strengths, suitability, and hiring recommendation.","evidenceNote":"Note on whether source was verbatim or summary and confidence level."}\n\nDescriptors:\n- Passion in Defence Engineering & Technology: Does the candidate demonstrate awareness and understanding of the recent advancements in defence technology?\n- Curiosity & Thirst for Learning: Does the candidate demonstrate curiosity and initiative to learn about the emerging technologies?\n- Drive to excel and lead others, while being a team player: Does the candidate demonstrate strong stakeholder management and collaboration skills in achieving intended deliverables or outcomes?\n- A keen and innovative problem solver [MANDATORY]: Does the candidate demonstrate innovation thinking or the ability to drive improvements?\n- Flexibility to adapt, and resilient in the face of adversity: Does the candidate demonstrate resilience and ability to adapt to a changing environment?\n- Knowledge: Does the candidate have up-to-date knowledge in relevant domains (e.g. DevSecOps, Robotics, HR, Finance)?\n- Skillsets: Does the candidate possess the relevant skillsets necessary to perform effectively in the role (e.g. programming, project management)?\n- Educational Background: Does the candidate possess the relevant educational qualifications required for the role?\n- Certification: Does the candidate have relevant certifications and training that would be relevant to the role?\n\nRules:\\n- Rating scale: Outstanding > Very Good > Good > Satisfactory > Unsatisfactory. Not Applicable only when there is truly no basis.\\n- For insufficient evidence: use Satisfactory, and write something natural like: Didnt get much on this one from the conversation - worth probing further.\\n- Do NOT generate TRE.\\n- Write remarks in a natural first-person assessor voice, as if a hiring manager is jotting down honest impressions after the interview:\\n  * Use hedging where evidence is limited: seemed like, got the sense that, appeared to\\n  * Reference specific things the candidate actually said\\n  * Flag gaps worth following up: would want to explore this further\\n  * Avoid HR jargon like demonstrates, exhibits, evidences\\n  * Keep it conversational - plain English, short sentences\\n  * If strong evidence: be positive but grounded - clearly knows her stuff on X, not candidate demonstrates advanced proficiency in X\\n- Role context: ' + (role || 'not specified') + '.\n\nTranscript:\n' + text;
+  var prompt = 'You are an expert HR assessor for DSTA (Defence Science and Technology Agency, Singapore).\nAnalyse the interview transcript using the descriptors below and return ONLY valid JSON, no preamble, no markdown.\n\nJSON structure:\n{"attributes":[{"name":"Passion in Defence Engineering & Technology","rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory|Not Applicable","remarks":"..."},{"name":"Curiosity & Thirst for Learning","rating":"...","remarks":"..."},{"name":"Drive to excel and lead others, while being a team player","rating":"...","remarks":"..."},{"name":"A keen and innovative problem solver","rating":"...","remarks":"... MANDATORY with specific evidence"},{"name":"Flexibility to adapt, and resilient in the face of adversity","rating":"...","remarks":"..."}],"skills":{"Knowledge":{"rating":"Outstanding|Very Good|Good|Satisfactory|Unsatisfactory","remarks":"..."},"Skillsets":{"rating":"...","remarks":"..."},"Educational Background":{"rating":"Yes|No","remarks":"..."},"Certification":{"rating":"Yes|No","remarks":"..."}},"justification":"Comprehensive paragraph on strengths, suitability, and hiring recommendation.","evidenceNote":"Note on whether source was verbatim or summary and confidence level."}\n\nDescriptors:\n- Passion in Defence Engineering & Technology: Does the candidate demonstrate awareness and understanding of the recent advancements in defence technology?\n- Curiosity & Thirst for Learning: Does the candidate demonstrate curiosity and initiative to learn about the emerging technologies?\n- Drive to excel and lead others, while being a team player: Does the candidate demonstrate strong stakeholder management and collaboration skills in achieving intended deliverables or outcomes?\n- A keen and innovative problem solver [MANDATORY]: Does the candidate demonstrate innovation thinking or the ability to drive improvements?\n- Flexibility to adapt, and resilient in the face of adversity: Does the candidate demonstrate resilience and ability to adapt to a changing environment?\n- Knowledge: Does the candidate have up-to-date knowledge in relevant domains (e.g. DevSecOps, Robotics, HR, Finance)?\n- Skillsets: Does the candidate possess the relevant skillsets necessary to perform effectively in the role (e.g. programming, project management)?\n- Educational Background: Does the candidate possess the relevant educational qualifications required for the role?\n- Certification: Does the candidate have relevant certifications and training that would be relevant to the role?\n\nRules:\\n- Rating scale: Outstanding > Very Good > Good > Satisfactory > Unsatisfactory. Not Applicable only when there is truly no basis.\\n- For insufficient evidence: use Satisfactory, and write something natural like: Not much came up on this one - hard to form a strong view based on what was shared.\\n- Do NOT generate TRE.\\n- Write remarks in a natural first-person assessor voice, as if a hiring manager is jotting down honest impressions after the interview:\\n  * Use hedging where evidence is limited: seemed like, got the sense that, appeared to\\n  * Reference specific things the candidate actually said\\n  * Where evidence is thin, note the limitation and conclude based on what was observed\\n  * Avoid HR jargon like demonstrates, exhibits, evidences\\n  * Keep it conversational - plain English, short sentences\\n  * If strong evidence: be positive but grounded - clearly knows her stuff on X, not candidate demonstrates advanced proficiency in X\\n- This is a final, concluded assessment — there are no further interview rounds. Never end remarks with forward-looking sentences such as: would want to explore further, worth probing in the next round, would need to see more examples, or any suggestion of future investigation. Where evidence is thin, note the limitation and still form a concluded view based on what was observed.\n- Role context: ' + (role || 'not specified') + '.\n\nTranscript:\n' + text;
   btn.disabled = true; btn.textContent = 'Analysing...'; statusEl.textContent = 'Sending to AI...';
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -438,7 +438,7 @@ document.getElementById('clearBtn').addEventListener('click', function () {
   document.getElementById('charCount').textContent = '0 characters';
   document.getElementById('uploadStatus').textContent = '';
   document.getElementById('uploadStatus').className = 'upload-status';
-  document.getElementById('uploadLabel').textContent = '↑ Upload transcript (.txt or .docx)';
+  document.getElementById('uploadLabel').textContent = '? Upload transcript (.txt or .docx)';
 });
 
 document.getElementById('resetBtn').addEventListener('click', function () {
@@ -478,7 +478,7 @@ function collectForm() {
   };
 }
 
-// ── DOCX Export — styled ────────────────────────────────────────────────────────
+// ?? DOCX Export — styled ????????????????????????????????????????????????????????
 document.getElementById('exportBtn').addEventListener('click', function () {
   var statusEl = document.getElementById('exportStatus');
   statusEl.textContent = 'Generating Word document...';
